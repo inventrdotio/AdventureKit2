@@ -1,2 +1,2 @@
-# AdventureKit2
-Code for the second adventure kit
+# Adventure Kit 2 (InventrKits)
+
