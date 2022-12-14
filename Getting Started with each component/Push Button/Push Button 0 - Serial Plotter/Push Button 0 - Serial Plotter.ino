@@ -2,7 +2,7 @@
 //
 // Use Serial Plotter in Arduino IDE to inspect push-button state in real time!
 
-const byte          BUTTON_PIN =   12;
+const byte          BUTTON_PIN =   13;  // Pin 13 has LED on Arduino Mega
 const unsigned long BAUD_RATE  = 9600;  // serial-port speed in bits per second
 
 // These two constants prevent the Serial Plotter from autoscaling the y-axis:
