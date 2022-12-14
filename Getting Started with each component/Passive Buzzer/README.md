@@ -1,7 +1,13 @@
 # Passive Buzzers
 
 ## Two Pin Passive Buzzer
-Fixed pitch buzzer that buzzes when ever + PIN is held HIGH.  Can be found in misc small parts box.  The passive and active look alike.  The active has a seal around the pins while the active has metal showing around the pins.
+Fixed pitch buzzer that buzzes when ever + PIN is held HIGH.  Can be found in misc small parts box.  There
+are TWO small buzzers in the kit, one active and one passive.  The active has a seal around the pins while
+the passive has metal showing around the pins.  This is what my passive buzzer's back looks like:
+
+ There are TWO small buzzers in the kit, one active and one passive.  The active buzzer that I have has a 'sealed' back:
+
+<img src="https://user-images.githubusercontent.com/15940/207705848-e44a0dec-28ed-4292-8348-0756403816c2.jpeg" width="200">
 
 2-pin and 3-pin are coded the same.  There are two ways of coding the passive buzzers.  Both use the tone() function.
 
