@@ -35,7 +35,7 @@ before the next tone then the delay needs to be longer than the ON_TIME.
 ### Installation
 No libraries or includes required.
 
-## Three Pin Passive Buzzer (KY-006)
+## Three Pin Passive Buzzer (KY-006 / HW-508)
 Same code as for 2-pin buzzer
 
 ## Wiring
