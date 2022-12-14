@@ -2,7 +2,7 @@
 
 ## Two Pin Active Buzzer
 
-Fixed pitch buzzer that buzzes when ever + PIN is held HIGH.
+Fixed pitch buzzer that buzzes when ever + PIN is held HIGH.  Can be found in misc small parts box.
 
 ```
   digitalWrite(BUZZER_PIN, HIGH); // Turn on buzzer
@@ -21,13 +21,14 @@ Fixed pitch buzzer that buzzes when ever + PIN is held HIGH.
 ### Installation
 No libraries or includes required.
 
-## Three Pin Active Buzzer (KY-012)
+## Three Pin Active Buzzer (KY-012, none found in kit)
 
-Multi-tone buzzer.  Uses tone() function to set frequency and duration of tone.
+Fixed pitch buzzer that buzzes when ever + PIN is held HIGH.
 ```
-  tone(BUZZER_PIN, 440, 1000);  // Sound 440hz pitch for one second
+  digitalWrite(BUZZER_PIN, HIGH); // Turn on buzzer
+  delay(1000);                    // let it run one second
+  digitalWrite(BUZZER_PIN, LOW);  // Turn off buzzer
 ```
-
 ## Wiring
 | Arduino | Buzzer |
 | --- | --- |
