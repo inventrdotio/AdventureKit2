@@ -2,10 +2,10 @@
 //
 // Play 440 Hz tone for 1 second, then no tone for 1 second, and repeat.
 
-const byte          BUZZER_PIN   =    2;  // PWM not needed
-const unsigned int  TONE_PITCH   =  440;  // Hz
-const unsigned long TONE_LENGTH  = 1000;  // ms
-const unsigned long CYCLE_LENGTH = 2000;  // ms
+constexpr byte          BUZZER_PIN   =    2;  // PWM not needed
+constexpr unsigned int  TONE_PITCH   =  440;  // Hz
+constexpr unsigned long TONE_LENGTH  = 1000;  // ms
+constexpr unsigned long CYCLE_LENGTH = 2000;  // ms (On time plus off time)
 
 void setup() {
   pinMode(BUZZER_PIN, OUTPUT);
