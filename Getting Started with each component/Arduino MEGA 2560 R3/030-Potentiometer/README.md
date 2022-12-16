@@ -17,7 +17,7 @@ https://docs.arduino.cc/built-in-examples/basics/AnalogReadSerial
 | 5v | 2 |
 | GND | 3 |
 
-<img src="One Potentiometer.png" width="350">
+<img src="OnePotentiometer.png" width="350">
 
 ### Installation
 No libraries or includes required.

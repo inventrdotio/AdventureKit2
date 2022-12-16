@@ -17,7 +17,7 @@ Project (with debounce code) https://docs.arduino.cc/built-in-examples/digital/D
 | 5v |
 | GND |
 
-<img src="One Push Button.png" width="350">
+<img src="OnePushButton.png" width="350">
 
 ### Installation
 No libraries or includes required.

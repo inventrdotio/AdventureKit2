@@ -36,7 +36,7 @@ before the next tone then the delay needs to be longer than the ON_TIME.
 | 2 | + |
 | GND | other |
 
-<img src="2-Pin Passive Buzzer.png" width="350">
+<img src="2PinPassiveBuzzer.png" width="350">
 
 ### Installation
 No libraries or includes required.
@@ -50,7 +50,7 @@ Same code as for 2-pin buzzer
 | 2 | S |
 | GND | - |
 
-<img src="3-Pin Passive Buzzer (KY-006).png" width="350">
+<img src="3PinPassiveBuzzer.png" width="350">
 
 ## Installation
 No libraries or includes required.
