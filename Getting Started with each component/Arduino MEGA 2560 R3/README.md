@@ -4,7 +4,7 @@
 https://store-usa.arduino.cc/products/arduino-mega-2560-rev3?selectedStore=us
 
 ## Pinout
-![picow-pinout](https://user-images.githubusercontent.com/15940/208019161-91738882-304b-4d88-bde4-b22cd0a27844.svg)
+<img src="https://user-images.githubusercontent.com/15940/208022456-11d2173f-547e-493c-84b1-5fd1e4ccbec2.png" width="600">
 
 ## Functional test
 For an initial test we'll blink the built in LED.
