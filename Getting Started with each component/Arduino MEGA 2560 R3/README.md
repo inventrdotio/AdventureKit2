@@ -15,3 +15,6 @@ No external connections other than the USB cable are required for this initial t
 
 ## Code
 [Blink.ino](Blink/Blink.ino)
+
+## Inventory checks
+### [000-Blink](000-Blink/000-Blink.ino)
