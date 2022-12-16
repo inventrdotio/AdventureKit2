@@ -18,7 +18,7 @@ Fixed pitch buzzer that buzzes when ever + PIN is held HIGH.  Can be found in mi
 | 2 | + |
 | GND | other |
 
-<img src="2-Pin Active Buzzer.png" width="350">
+<img src="2PinActiveBuzzer.png" width="350">
 
 ### Installation
 No libraries or includes required.
@@ -37,7 +37,7 @@ Fixed pitch buzzer that buzzes when ever + PIN is held HIGH.
 | 2 | S |
 | GND | - |
 
-<img src="3-Pin Active Buzzer (KY-012).png" width="350">
+<img src="3PinActiveBuzzer.png" width="350">
 
 ## Installation
 No libraries or includes required.
