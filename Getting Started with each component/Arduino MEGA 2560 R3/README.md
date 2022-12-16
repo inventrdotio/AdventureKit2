@@ -18,3 +18,7 @@ No external connections other than the USB cable are required for this initial t
 
 ## Inventory checks
 ### [000-Blink](000-Blink/000-Blink.ino)
+### [010-ActiveBuzzer](010-ActiveBuzzer/010-ActiveBuzzer.ino)
+### [020-PassiveBuzzer](020-PassiveBuzzer/020-PassiveBuzzer.ino)
+### [030-Potentiometer](030-Potentiometer/030-Potentiometer.ino)
+### [040-PushButton](040-PushButton/040-PushButton.ino)
