@@ -36,7 +36,7 @@ void loop() {
 | 13 | Trig |
 | 12 | Echo |
 
-<img src="UltrasonicSensor-HC-SR04.png" width="350">
+<img src="UltrasonicSensor-HC-SR04.png" width="500">
 
 ### Installation
 No libraries required for use.
