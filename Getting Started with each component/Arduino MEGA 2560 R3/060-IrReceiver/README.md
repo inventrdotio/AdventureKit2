@@ -32,6 +32,6 @@ void loop() {
 <img src="IrReceiver.png" width="350">
 
 ### Installation
-Library https://github.com/Arduino-IRremote/Arduino-IRremote
-IRremote by shirriff, z3t0, ArminJo
+Library https://github.com/Arduino-IRremote/Arduino-IRremote  
+IRremote by shirriff, z3t0, ArminJo  
 
