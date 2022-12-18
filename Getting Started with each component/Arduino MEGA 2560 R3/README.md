@@ -7,7 +7,8 @@ https://store-usa.arduino.cc/products/arduino-mega-2560-rev3?selectedStore=us
 <img src="https://user-images.githubusercontent.com/15940/208022456-11d2173f-547e-493c-84b1-5fd1e4ccbec2.png" width="600">
 
 ## Functional test
-For an initial test we'll blink the built in LED.
+For an initial test we'll blink the built in LED.  Be sure that your board/serial port are set to "Arduino Mega or Mega 2560"
+in the Arduino ID to ensure pin definitions are correct for the board you're using.
 
 ### Wiring diagram
 No external connections other than the USB cable are required for this initial test.
