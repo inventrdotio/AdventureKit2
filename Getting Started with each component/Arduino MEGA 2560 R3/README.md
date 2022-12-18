@@ -18,8 +18,11 @@ No external connections other than the USB cable are required for this initial t
 [Blink.ino](Blink/Blink.ino)
 
 ## Inventory checks
-### [000-Blink](000-Blink/000-Blink.ino)
-### [010-ActiveBuzzer](010-ActiveBuzzer/010-ActiveBuzzer.ino)
-### [020-PassiveBuzzer](020-PassiveBuzzer/020-PassiveBuzzer.ino)
-### [030-Potentiometer](030-Potentiometer/030-Potentiometer.ino)
-### [040-PushButton](040-PushButton/040-PushButton.ino)
+* [000-Blink](000-Blink/000-Blink.ino)
+* [010-ActiveBuzzer](010-ActiveBuzzer/010-ActiveBuzzer.ino)
+* [020-PassiveBuzzer](020-PassiveBuzzer/020-PassiveBuzzer.ino)
+* [030-Potentiometer](030-Potentiometer/030-Potentiometer.ino)
+* [040-PushButton](040-PushButton/040-PushButton.ino)
+* [060-IrReceiver](060-IrReceiver/060-IrReceiver.ino)
+* [070-UltrasonicSensor](070-UltrasonicSensor/070-UltrasonicSensor.ino)
+* [080-1Digit7SegmentLED](080-1Digit7SegmentLED/080-1Digit7SegmentLED.ino)
