@@ -45,6 +45,7 @@ version as some pins are different (notably the built in LED (LED_BUILTIN).
 
 # Full Documentation
 https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html
+https://arduino-pico.readthedocs.io/en/latest/index.html
 
 # Pinouts
 ![picow-pinout](https://user-images.githubusercontent.com/15940/207995088-40d6c32a-f4c5-4c56-a627-e250077aa1f6.svg)
