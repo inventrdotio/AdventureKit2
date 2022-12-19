@@ -26,3 +26,4 @@ No external connections other than the USB cable are required for this initial t
 * [060-IrReceiver](060-IrReceiver/060-IrReceiver.ino)
 * [070-UltrasonicSensor](070-UltrasonicSensor/070-UltrasonicSensor.ino)
 * [080-1Digit7SegmentLED](080-1Digit7SegmentLED/080-1Digit7SegmentLED.ino)
+* [090-PIRMotionSensor](090-PIRMotionSensor/090-PIRMotionSensor.ino)
