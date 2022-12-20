@@ -3,10 +3,10 @@
 Membrane keypads are an excellent starting point for adding key input to a project because they are inexpensive, long-lasting, and resistant to water. And knowing how to interface them with an Arduino is extremely useful for building a variety of projects that require user input for menu selection, password entry, or robot operation.
 
 ### Documentation
-[Datasheet](https://www.jameco.com/Jameco/Products/ProdDS/2333119.pdf)
-[Sample Project](https://lastminuteengineers.com/arduino-keypad-tutorial/)
+* [Datasheet](https://www.jameco.com/Jameco/Products/ProdDS/2333119.pdf)
+* [Sample Project](https://lastminuteengineers.com/arduino-keypad-tutorial/)
 
-
+### Sample Program
 ```
 #include <Keypad.h>
 
