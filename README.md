@@ -7,7 +7,7 @@
 
 ## Scenario Info
 
-## [Device List](./Devices/Device_List.md)
+## [Device List](./Devices)
 
 ## Setup/Installation
 
