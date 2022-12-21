@@ -43,9 +43,9 @@ It will take a minute to copy all the files, once it's done, you are ready to st
 Once complete, you should be able to select "Raspbery Pi Pico W" as your board type.  Make SURE that you select the "W"
 version as some pins are different (notably the built in LED (LED_BUILTIN).
 
-# Full Documentation
-https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html
-https://arduino-pico.readthedocs.io/en/latest/index.html
+# Documentation
+* https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html
+* https://arduino-pico.readthedocs.io/en/latest/index.html
 
 # Pinouts
 ![picow-pinout](https://user-images.githubusercontent.com/15940/207995088-40d6c32a-f4c5-4c56-a627-e250077aa1f6.svg)
