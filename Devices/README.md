@@ -5,7 +5,7 @@ First step, let's make sure you've received everything you will need.
 
 ## Inventory
 
-### [Information about Buzzers](./Identfying_Buzzers.md)
+### [Information about Buzzers](./Identifying_Buzzers.md)
 
 ### Boards
 
