@@ -23,5 +23,5 @@ First step, let's make sure you've received everything you will need.
 
 | Picture | Part Number | Description |
 | --- | --- | --- |
-| | [KY-012](KY-012.md) | 2-Pin Active Buzzer |
+| <img src="https://user-images.githubusercontent.com/15940/207704594-68e639e8-d183-408e-a649-8fd3ede81f99.jpeg" width="100"> | [KY-012](KY-012.md) | 2-Pin Active Buzzer |
 | | [HW-512](HW-512.md) | 3-Pin Active Buzzer |
