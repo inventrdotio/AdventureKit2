@@ -7,7 +7,7 @@
 
 ## Scenario Info
 
-## [Device List](https://github.com/inventrdotio/AdventureKit2/wiki/Devices/Device_List.md)
+## [Device List](./Devices/Device_List.md)
 
 ## Setup/Installation
 
