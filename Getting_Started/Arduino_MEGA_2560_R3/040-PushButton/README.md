@@ -6,14 +6,14 @@ Contained in the small plastic box of miscellaneous parts.
 Project (with debounce code) https://docs.arduino.cc/built-in-examples/digital/Debounce
 
 ```
-  constexpr byte BUTTON_PIN = 13;
+  constexpr byte BUTTON_PIN = 12;
   int value = DIGITALRead(ANALOG_PIN);
 ```
 
 ### Wiring
 | Arduino |
 | --- |
-| 13 |
+| 12 |
 | 5v |
 | GND |
 
