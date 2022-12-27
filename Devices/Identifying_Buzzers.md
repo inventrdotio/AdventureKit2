@@ -12,5 +12,9 @@ Adventure Kit 2 (AK2) contains four buzzers.  There are two [active buzzers](#ac
 ## Active Buzzers
 
 Active buzzers emit a fixed pitch sound whenever the proper voltage is supplied to the device.
-There are two active buzzers in AK2, a 2-pin (small) buzzer ([KY-012](/Devices/KY-012.md)) and
-a 3-pin buzzer mounted on a small PCB ([HW-512](/Devices/HW-512.md)).
+There are two active buzzers in AK2, a 2-pin (small) buzzer ([KY-012](/Devices/KY-012_2-PinActiveBuzzer.md)) and
+a 3-pin buzzer mounted on a small PCB ([HW-512](/Devices/HW-512_3-PinActiveBuzzer.md)).
+
+## Passive Buzzers
+
+
