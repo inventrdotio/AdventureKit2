@@ -16,9 +16,9 @@ First step, let's make sure you've received everything you will need.
 
 ### Sensors
 
-| Picture | Description |
-| --- | --- |
-| | [HW-038](HW-038_WaterLevelDetector.md) | Water Level Detector |
+| Picture | Part Number | Description |
+| --- | --- | -- |
+| <img src="https://user-images.githubusercontent.com/15940/209719372-74394072-b56a-4eec-a903-5413f8c64b6e.png" width="100"> | [HW-038](HW-038_WaterLevelDetector.md) | Water Level Detector |
 
 ### Output Devices
 
