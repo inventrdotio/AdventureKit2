@@ -1,6 +1,6 @@
 # Water Level Detector
 
-picture
+<img src="https://user-images.githubusercontent.com/15940/209719372-74394072-b56a-4eec-a903-5413f8c64b6e.png" width="200">
 
 This sensor can measure water level.  It has ten exposed copper traces, five of which are power traces
 and the remaining five are sense traces. These traces are interlaced so that there is one sense trace
