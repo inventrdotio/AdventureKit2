@@ -23,6 +23,7 @@ No external connections other than the USB cable are required for this initial t
 * [020 Passive Buzzer](020-PassiveBuzzer/020-PassiveBuzzer.ino)
 * [030 Potentiometer](030-Potentiometer/030-Potentiometer.ino)
 * [040 Push Button](040-PushButton/040-PushButton.ino)
+* [050-WaterLevelDetector](050-WaterLevelDetector.ino)
 * [060 IR Receiver](060-IrReceiver/060-IrReceiver.ino)
 * [070 Ultrasonic Sensor](070-UltrasonicSensor/070-UltrasonicSensor.ino)
 * [080 1 Digit 7 Segment LED](080-1Digit7SegmentLED/080-1Digit7SegmentLED.ino)
