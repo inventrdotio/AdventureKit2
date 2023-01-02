@@ -1,37 +1,34 @@
 /*
-PIR HCSR501 or HW-416-B
-modified on 5 Feb 2019
-by Saeed Hosseini @ ElectroPeak
-https://electropeak.com/learn/guides/
-*/
+ * PIR HCSR501 or HW-416-B
+ */
+
 int pirPin = 2;   // PIR Out pin
-int pirStat = 0;  // PIR status
-long startTime;
-bool idle = true;
+
+bool detected = false;
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(12, OUTPUT);
-  pinMode(pirPin, INPUT);
   Serial.begin(115200);
-  startTime = millis();
+  pinMode(pirPin, INPUT);
 }
+
+int counter = 0;
 void loop() {
-  float seconds = float(millis() - startTime) / 1000.0;
-  Serial.print(seconds);
-  Serial.print(" seconds.");
-  pirStat = digitalRead(pirPin);
-  if (pirStat == HIGH && !idle) {         // if motion detected
-    digitalWrite(LED_BUILTIN, HIGH);  // turn LED ON
-    digitalWrite(12, HIGH);
-    Serial.println(" Hey I got you!!!");
-  } else {
-    idle = false;
-    startTime = millis();
-    Serial.println();
-    digitalWrite(LED_BUILTIN, LOW);  // turn LED OFF if we have no motion
-    digitalWrite(12, LOW);
+  int pirStat = digitalRead(pirPin);
+  if (pirStat == HIGH && !detected) {   // if motion detected (output LOW!)
+    detected = true;
+    counter = 0;
+    Serial.println("\nMotion Detected!!!");
   }
-  Serial.print("\r");
-  delay(200);
+  if (pirStat == LOW && detected) {     // Previous detection has timed out
+    detected = false;
+    Serial.println("  All quiet now...");
+    Serial.println();
+  }
+  if (detected) {
+    Serial.print("status: ");
+    Serial.print(pirStat);
+    Serial.print(" at ");
+    Serial.println(counter++);
+  }
+  delay(1000);
 }
