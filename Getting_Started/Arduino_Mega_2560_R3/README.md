@@ -32,4 +32,6 @@ No external connections other than the USB cable are required for this initial t
 * [100 4x4 Membrane Keypad](100-4x4_MembraneKeypad)
 * [110 Game Joystick](110-GameJoystick)
 * [120 Temperature and Humidity Sensor](120-TemperatureHumidity)
-* [200 16x2 LCD_Display](200-LCD_Display)
+* [130 SoundSensor](130-SoundSensor)
+* [140 Real Time Clock](140-RealTimeClock)
+* [200 16x2 LCD Display](200-LCD_Display)
