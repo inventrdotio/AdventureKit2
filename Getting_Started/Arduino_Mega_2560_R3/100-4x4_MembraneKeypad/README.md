@@ -54,5 +54,5 @@ void loop(){
 
 <img src="4x4_MembraneKeypad.png" width="500">
 
-### Installation
-Install Keypad by Mark Sstanley, Alexander Brevig
+### Installation (Required Libraries)
+Install Keypad by Mark Sstanley, Alexander Brevig (can also be found at inventr.io/libraries)
