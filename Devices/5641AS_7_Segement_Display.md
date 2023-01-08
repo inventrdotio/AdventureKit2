@@ -22,4 +22,7 @@
 
 [Arduino Connection](./FritzingParts/5641AS_Arduino_Connection.fzz)
 
+## Datasheet
+http://www.xlitx.com/datasheet/5641AS.pdf
+
 Creator: [Damon Rocha](http://github.com/dmarcr1997)
