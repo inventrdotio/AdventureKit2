@@ -5,7 +5,7 @@
 
 ## Projects
 
-* Coming Soon...
+* [Seven Segment Display Counter](../Getting_Started/Arduino_Mega_2560_R3/Counter/Counter.ino)
 
 ## Component Specs and Setup
 <p align="center">
