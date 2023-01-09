@@ -26,3 +26,6 @@ First step, let's make sure you've received everything you will need.
 | --- | --- | --- |
 | <img src="https://user-images.githubusercontent.com/15940/207704594-68e639e8-d183-408e-a649-8fd3ede81f99.jpeg" width="100"> | [KY-012](KY-012_2-PinActiveBuzzer.md) | 2-Pin Active Buzzer |
 | | [HW-512](HW-512_3-PinActiveBuzzer.md) | 3-Pin Active Buzzer |
+| <img src="./Pictures/5641AS_Red_4-Digit_LED_7-Segment Display.png" width="80"> | [5641AS](5641AS_&_SegmentDisplay.md) | 7 Segment Display |
+
+
