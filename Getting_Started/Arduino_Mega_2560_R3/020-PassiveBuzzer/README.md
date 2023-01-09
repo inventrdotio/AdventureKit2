@@ -1,5 +1,7 @@
 # Passive Buzzers
 
+Video Link: https://www.youtube.com/watch?v=rrHpzDxW1Xg
+
 ## Two Pin Passive Buzzer
 Fixed pitch buzzer that buzzes when ever + PIN is held HIGH.  Can be found in misc small parts box.  There
 are TWO small buzzers in the kit, one active and one passive.  The active has a seal around the pins while
