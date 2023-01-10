@@ -28,4 +28,8 @@ First step, let's make sure you've received everything you will need.
 | | [HW-512](HW-512_3-PinActiveBuzzer.md) | 3-Pin Active Buzzer |
 | <img src="./Pictures/5641AS_Red_4-Digit_LED_7-Segment Display.png" width="80"> | [5641AS](5641AS_7_SegmentDisplay.md) | 7 Segment Display |
 
+### Motors
 
+| Picture | Part Number | Description |
+| --- | --- | --- |
+| <img src="" width="100"> | [SG90 Servo Motor](SG90_Micro_Servo.md) | Servo Motor |
