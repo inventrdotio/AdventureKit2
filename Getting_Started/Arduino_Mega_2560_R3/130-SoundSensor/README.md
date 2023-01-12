@@ -22,9 +22,9 @@ void loop() {
 | A0 | A0 |
 | GND | GND |
 | 5v | VCC |
-| D0 | S |
+| 2 | S |
 
-<img src="SoundSensor.png" width="500">
+<img src="SoundSensor - KY-038.png" width="500">
 
 ### Installation
 No libraries required for use.
