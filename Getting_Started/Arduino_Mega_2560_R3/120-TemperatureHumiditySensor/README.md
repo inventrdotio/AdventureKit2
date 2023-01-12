@@ -1,4 +1,4 @@
-# Temperature and Humidity Sendor (KY-015 / DHT-11)
+# Temperature and Humidity Sensor (KY-015 / DHT-11)
 
 The KY-015 Temperature and Humidity Sensor module provides a digital serial interface to measure
 environment humidity and temperature. Compatible with various microcontrollers like Arduino,
