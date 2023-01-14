@@ -32,4 +32,4 @@ First step, let's make sure you've received everything you will need.
 
 | Picture | Part Number | Description |
 | --- | --- | --- |
-| <img src="" width="100"> | [SG90 Servo Motor](SG90_Micro_Servo.md) | Servo Motor |
+| <img src="Pictures/SG90MicroServoPart.png" width="100"> | [SG90 Servo Motor](SG90_Micro_Servo.md) | Servo Motor |

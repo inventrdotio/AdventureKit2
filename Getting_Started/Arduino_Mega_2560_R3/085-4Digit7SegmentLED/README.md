@@ -30,3 +30,4 @@ NOTE: The current part in the Beta kit is a bare display and required significan
 <img src="4Digit7Segment.png" width="500">
 
 ### Installation
+Install "SevSeg" library by Dean Reading from Arduino IDE Library Manager

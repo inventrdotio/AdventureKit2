@@ -35,4 +35,4 @@ void loop() {
 <img src="1Digit7SegmentLED.png" width="500">
 
 ### Installation
-No libraries required for use.
+Install "SevSeg" library by Dean Reading from Arduino IDE Library Manager

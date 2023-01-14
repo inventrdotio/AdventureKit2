@@ -16,9 +16,17 @@ DS3231 setRTC;
 
 void setup () {
     Serial.begin(115200);
+    while(!Serial);
     Wire.begin();
     delay(500);
-    printf("printf is supported!\n");
+    printf("To set RTC enter time as YYMMDDwHHMMSS as all digits where:\n");
+    printf("YY = last two digits of year.\n");
+    printf("MM = month (01-12)\n");
+    printf("DD = day (01-31)\n");
+    printf("w = Day of Week, Sun-Sat (1-7)\n");
+    printf("HH = Hour of day (00-23)\n");
+    printf("MM = Minute of hour (00-59)\n");
+    printf("SS = Second (00-59)\n\n");
 }
 
 void loop () {
