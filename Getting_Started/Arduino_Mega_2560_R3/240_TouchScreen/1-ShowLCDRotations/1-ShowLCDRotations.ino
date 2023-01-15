@@ -1,7 +1,26 @@
 /*
- Demonstrates rotations for
- TFT LCD - resistive.
-*/
+ * Day 0 - AI Apocalypse by inventr.io
+ * Learn more at https://inventr.io/PLACEHOLDER
+ *
+ * Getting Started
+ * HiLetgo 2.4" ILI9341 240X320 TFT LCD Display with Touch Panel
+ * Show LCD Rotations
+ *
+ * The LCD display can be rotated so that any of it's four sides are designated
+ * as "top".  Rotations are numbered 0-4 with rotation 0 used when the display
+ * is oriented with the white reset button on top.  The remaining rotations
+ * proceed in a clockwise direction (as will be demonstrated with our first test
+ * program).
+ *
+ * Rotations:
+ *
+ * 0. Portrait rotation (white button on top)
+ * 1. Landscape rotation (white button on left)
+ * 2. Portrait rotation (white button on bottom)
+ * 3. Landscape rotation (white button on right)
+ *
+ * Adapted for Inventr.io by David Schmidt
+ */
 
 #include <MCUFRIEND_kbv.h>
 
@@ -17,9 +36,10 @@ MCUFRIEND_kbv tft;
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 
- // Rotations 0,2 = portrait  : 0->USB=right,upper : 2->USB=left,lower
- // Rotations 1,3 = landscape : 1->USB=left,upper  : 3->USB=right,lower
+// Rotations 0,2 = portrait  : 0->button on top : 2->button on bottom
+// Rotations 1,3 = landscape : 1->button on left  : 3->button on right
 
+// Show location of coordinate 0, 0 for current rotation
 void showZeroZero(byte orientation)
  {
   tft.fillScreen(BLUE);
@@ -36,8 +56,9 @@ void setup() {
   tft.setTextSize(3);
 }
 
+// Show origin and rotation number for each rotation (0-3) for two seconds
 void loop() {
-  for(byte rotation=0; rotation<4; rotation++) {
+  for (byte rotation=0; rotation<4; rotation++) {
   tft.setRotation(rotation);
   showZeroZero(rotation);
   delay(2000);

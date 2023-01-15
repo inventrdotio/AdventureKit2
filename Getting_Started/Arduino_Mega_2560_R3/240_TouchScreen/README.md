@@ -29,6 +29,26 @@ Load 1-ShowLCDRotations and upload.  You should see each text displayed in each 
 
 Since the touch panel is an analog device it also needs to be calibrated so that touch panel coordinates can be accurately mapped to the LCD panel coordinates.
 
+Test Program:
 
+Load 2-TouchScreenCalibration and upload.  You will be instructed to press the stylus down to begin the test.  You will then be presented with a number of small red boxes containing plus signs ('+').  As each box turns white press the stylus onto the center of the '+' sign and hold it until the box turns red.
+
+Once each box has been pressed you will be presented with calibration numbers on-screen and in the serial console.  You will need these numbers for use in programs using this device so please copy and save them from the Serial console.
+
+They will look something like this:
+
+```
+const int XP=8,XM=A2,YP=A3,YM=9; //240x320 ID=0x9341
+const int TS_LEFT=109,TS_RT=914,TS_TOP=86,TS_BOT=905;
+
+PORTRAIT  CALIBRATION     240 x 320
+x = map(p.x, LEFT=109, RT=914, 0, 240)
+y = map(p.y, TOP=86, BOT=905, 0, 320)
+
+LANDSCAPE CALIBRATION     320 x 240
+x = map(p.y, LEFT=86, RT=905, 0, 320)
+y = map(p.x, TOP=914, BOT=109, 0, 240)
+```
 
 ## Installation
+Install MCUFRIEND_kbv and Adafruit TouchScreen from Arduino IDE Library Manager.
