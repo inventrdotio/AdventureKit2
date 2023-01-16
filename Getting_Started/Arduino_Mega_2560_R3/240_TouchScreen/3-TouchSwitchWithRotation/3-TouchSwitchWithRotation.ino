@@ -22,7 +22,6 @@
  * Adapted for Inventr.io by David Schmidt
  */
 
-// #include <Adafruit_GFX.h>
 #include <MCUFRIEND_kbv.h>
 #include <TouchScreen.h>
 
@@ -30,6 +29,7 @@
 constexpr uint16_t MINPRESSURE = 200;
 constexpr uint16_t MAXPRESSURE = 1000;
 
+// NOTE:
 // Replace these lines with the two constexpr lines you generated (and saved)
 // from when you ran the Touch Screen Calibration program (2-TouchScreenCalibration).
 //=========================================
@@ -39,7 +39,7 @@ constexpr int TS_LEFT=110,TS_RT=916,TS_TOP=84,TS_BOT=907;
 
 // Rotations 0,2 = portrait  : 0->USB=right,upper : 2->USB=left,lower
 // Rotations 1,3 = landscape : 1->USB=left,upper  : 3->USB=right,lower
-byte rotation = 0; //(0->3)
+byte rotation = 1; //(0->3)
 
 // Define LCD display and touch panel objects
 MCUFRIEND_kbv tft;
@@ -92,6 +92,9 @@ bool Touch_getXY(void)
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 
+// Global as they're used in both setup() and loop()
+int LIGHT_WIDTH, LIGHT_HEIGHT, LIGHT_X_PAD;
+
 void setup(void)
 {
   Serial.begin(115200);
@@ -105,47 +108,48 @@ void setup(void)
   tft.begin(ID);
   tft.setRotation(rotation);
   tft.fillScreen(BLACK);
-  int LIGHT_WIDTH = (tft.width() * 2) / 3;
-  int LIGHT_HEIGHT = tft.height() / 4;
-  int LIGHT_X_PAD = (tft.width() - LIGHT_WIDTH) / 2;
+
+  // Compute size of indicator that shows the state of our "light"
+  LIGHT_WIDTH = (tft.width() * 2) / 3;
+  LIGHT_HEIGHT = tft.height() / 4;
+  LIGHT_X_PAD = (tft.width() - LIGHT_WIDTH) / 2;
   tft.fillRect(LIGHT_X_PAD, LIGHT_HEIGHT, LIGHT_WIDTH, LIGHT_HEIGHT, RED);
-  // tft.fillRect(40, 80, 160, 80, RED);
-  int BTN_X_PAD = tft.width() / 12; // 20
-  int BTN_WIDTH = BTN_X_PAD * 5; // 100
-  int BTN_Y_PAD = tft.height() / 8; // 40
+
+  // Determine location and size of On and Off buttons.
+  int BTN_PAD = tft.width() / 12; // Padding between buttons (20)
+  int BTN_WIDTH = BTN_PAD * 5; // 100
   int BTN_HEIGHT = tft.height() / 8;  // 40
-  Serial.println(BTN_X_PAD);
-  Serial.println(BTN_WIDTH);
-  Serial.println(BTN_Y_PAD);
-  Serial.println(BTN_HEIGHT);
-  // initButton(&GFX, X_CENTER, Y_CENTER, WIDTH, HEIGHT, ...)
-  // initButton(&GFX, X, Y, WIDTH, HEIGHT, ...)
-  on_btn.initButton(&tft, BTN_X_PAD * 3, tft.height() / 2 + BTN_Y_PAD, BTN_WIDTH, BTN_HEIGHT, WHITE, CYAN, BLACK, "ON", 2);
-  // on_btn.initButton(&tft,  60, 200, 100, 40, WHITE, CYAN, BLACK, "ON", 2);
-  // off_btn.initButton(&tft, 180, 200, 100, 40, WHITE, CYAN, BLACK, "OFF", 2);
-  off_btn.initButton(&tft, 180, 200, 100, 40, WHITE, CYAN, BLACK, "OFF", 2);
-  on_btn.drawButton(false);
-  off_btn.drawButton(false);
+  // initButton() takes the coordinates of the *center* of the button
+  int ON_BTN_X_CENTER = (tft.width() / 2) - (BTN_PAD / 2) - (BTN_WIDTH / 2);  // center X for On button
+  int ON_BTN_Y_CENTER = (tft.height() / 2) + BTN_PAD + (BTN_HEIGHT / 2);  // center Y (for both buttons)
+  int OFF_BTN_X_CENTER = (tft.width() / 2) + (BTN_PAD / 2) + (BTN_WIDTH / 2);
+  int OFF_BTN_Y_CENTER = ON_BTN_Y_CENTER;  // Same height as ON button.
+
+  // Draw On and Off buttons.
+  on_btn.initButton(&tft, ON_BTN_X_CENTER, ON_BTN_Y_CENTER, BTN_WIDTH, BTN_HEIGHT, WHITE, CYAN, BLACK, "ON", 2);
+  off_btn.initButton(&tft, OFF_BTN_X_CENTER, OFF_BTN_Y_CENTER, BTN_WIDTH, BTN_HEIGHT, WHITE, CYAN, BLACK, "OFF", 2);
+  on_btn.drawButton();
+  off_btn.drawButton();
 }
 
-/* two buttons are quite simple
- */
+constexpr bool INVERTED = true;  // Used to draw buttons with inverted colors.
+
 void loop(void)
 {
-    bool down = Touch_getXY();
-    on_btn.press(down && on_btn.contains(pixel_x, pixel_y));
-    off_btn.press(down && off_btn.contains(pixel_x, pixel_y));
-    if (on_btn.justReleased())
-        on_btn.drawButton();
-    if (off_btn.justReleased())
-        off_btn.drawButton();
-    if (on_btn.justPressed()) {
-        on_btn.drawButton(true);
-        tft.fillRect(40, 80, 160, 80, GREEN);
-    }
-    if (off_btn.justPressed()) {
-        off_btn.drawButton(true);
-        tft.fillRect(40, 80, 160, 80, RED);
-    }
-    delay(250);
+  bool down = Touch_getXY();
+  on_btn.press(down && on_btn.contains(pixel_x, pixel_y));
+  off_btn.press(down && off_btn.contains(pixel_x, pixel_y));
+  if (on_btn.justReleased())
+    on_btn.drawButton();  // clears "inverted" color drawn when first pressed
+  if (off_btn.justReleased())
+    off_btn.drawButton();
+  if (on_btn.justPressed()) {
+    on_btn.drawButton(INVERTED);
+    tft.fillRect(LIGHT_X_PAD, LIGHT_HEIGHT, LIGHT_WIDTH, LIGHT_HEIGHT, GREEN);
+  }
+  if (off_btn.justPressed()) {
+    off_btn.drawButton(INVERTED);
+    tft.fillRect(LIGHT_X_PAD, LIGHT_HEIGHT, LIGHT_WIDTH, LIGHT_HEIGHT, RED);
+  }
+  delay(250);
 }
