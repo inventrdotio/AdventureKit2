@@ -38,8 +38,8 @@ Once each box has been pressed you will be presented with calibration numbers on
 They will look something like this:
 
 ```
-const int XP=8,XM=A2,YP=A3,YM=9; //240x320 ID=0x9341
-const int TS_LEFT=109,TS_RT=914,TS_TOP=86,TS_BOT=905;
+constexpr int XP=8,XM=A2,YP=A3,YM=9; //240x320 ID=0x9341
+constexpr int TS_LEFT=109,TS_RT=914,TS_TOP=86,TS_BOT=905;
 
 PORTRAIT  CALIBRATION     240 x 320
 x = map(p.x, LEFT=109, RT=914, 0, 240)
@@ -49,6 +49,14 @@ LANDSCAPE CALIBRATION     320 x 240
 x = map(p.y, LEFT=86, RT=905, 0, 320)
 y = map(p.x, TOP=914, BOT=109, 0, 240)
 ```
+
+### Step 3: LCD graphics with touch controls and rotation
+
+Once you have the touch panel calibrated you can use those numbers to coordinate the on-screen graphics with touch events.
+
+Test Program:
+
+Load 3-TouchSwitchWithRotation.
 
 ## Installation
 Install MCUFRIEND_kbv and Adafruit TouchScreen from Arduino IDE Library Manager.

@@ -32,8 +32,8 @@
 
 MCUFRIEND_kbv tft;
 
-// Pin configuration for HiLetgo 2.4" 240x320
-int XP = 9, YP = A2, XM = A3, YM = 8;  // next common configuration
+// Initial guess for pin configuration for HiLetgo 2.4" 240x320 (ILI9341)
+int XP = 8, YP = A2, XM = A3, YM = 9;  // next common configuration
 
 TouchScreen ts(XP, YP, XM, YM, 300);   // re-initialised after diagnose
 
@@ -339,14 +339,14 @@ void report()
     SWAP(TS_LEFT, TS_RT);
     SWAP(TS_TOP, TS_BOT);
   }
-  sprintf(buf, "const int XP=%d,XM=%s,YP=%s,YM=%d; //%dx%d ID=0x%04X",
+  sprintf(buf, "constexpr int XP=%d,XM=%s,YP=%s,YM=%d; //%dx%d ID=0x%04X",
           XP, Aval(XM), Aval(YP), YM, TS_WID, TS_HT, readID());
   Serial.println(buf);
   sprintf(buf, "\nTouch Pin Wiring XP=%d XM=%s YP=%s YM=%d",
           XP, Aval(XM), Aval(YP), YM);
   tft.println(buf);
 
-  sprintf(buf, "const int TS_LEFT=%d,TS_RT=%d,TS_TOP=%d,TS_BOT=%d;",
+  sprintf(buf, "constexpr int TS_LEFT=%d,TS_RT=%d,TS_TOP=%d,TS_BOT=%d;",
           TS_LEFT, TS_RT, TS_TOP, TS_BOT);
   Serial.println(buf);
 
