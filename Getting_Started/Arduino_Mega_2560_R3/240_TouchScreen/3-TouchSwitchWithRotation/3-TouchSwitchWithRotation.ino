@@ -39,7 +39,7 @@ constexpr int TS_LEFT=110,TS_RT=916,TS_TOP=84,TS_BOT=907;
 
 // Rotations 0,2 = portrait  : 0->USB=right,upper : 2->USB=left,lower
 // Rotations 1,3 = landscape : 1->USB=left,upper  : 3->USB=right,lower
-byte rotation = 1; //(0->3)
+byte rotation = 0; //(0->3)
 
 // Define LCD display and touch panel objects
 MCUFRIEND_kbv tft;

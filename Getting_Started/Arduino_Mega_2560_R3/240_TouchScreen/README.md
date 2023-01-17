@@ -56,7 +56,14 @@ Once you have the touch panel calibrated you can use those numbers to coordinate
 
 Test Program:
 
-Load 3-TouchSwitchWithRotation.
+Load 3-TouchSwitchWithRotation.  Locate the comments with "======" and replace the lines between those comments with the "constexpr" lines you saved in Step 2.  Upload and try out the demo, clicking each button to switch the light.  Also, click *outside* the buttons to verify that only button clicks are detected.
+
+If the clicks don't align well with the buttons then re-run the Calibration program and enter the updated calibration values and try again.
+
+### Step 4: Graphics Demo!
+
+Load 4-GraphicsDemo and upload to see a demo of the graphics capabilities of this shield.
 
 ## Installation
 Install MCUFRIEND_kbv and Adafruit TouchScreen from Arduino IDE Library Manager.
+
