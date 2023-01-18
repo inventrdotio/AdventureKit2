@@ -20,10 +20,11 @@
 // I2C address of the MPU-6050. If AD0 pin is set to HIGH, the I2C address will be 0x69.
 constexpr int MPU_ADDR = 0x68;
 
+char tmp_str[7]; // temporary variable used in convert function 
 char* convert_int16_to_str(int16_t i) { // converts int16 to string. Moreover, resulting strings will have the same length in the debug monitor.
-  char tmp_str[7]; // temporary variable used in convert function 
 
   sprintf(tmp_str, "%6d", i);
+  // Serial.println(tmp_str);
   return tmp_str;
 }
 
@@ -54,6 +55,7 @@ void loop() {
   int16_t gyro_z =          Wire.read()<<8 | Wire.read(); // reading registers: 0x47 (GYRO_ZOUT_H) and 0x48 (GYRO_ZOUT_L)
   
   // print out data
+  Serial.println(accelerometer_x);
   Serial.print("aX = "); Serial.print(convert_int16_to_str(accelerometer_x));
   Serial.print(" | aY = "); Serial.print(convert_int16_to_str(accelerometer_y));
   Serial.print(" | aZ = "); Serial.print(convert_int16_to_str(accelerometer_z));
