@@ -38,22 +38,19 @@ void loop() {
     // Here are three spots where we *stop* the count until the rotary button is pressed
     // (press down on stem).
     if(previousCounter < 10 && counter >= 10) {
-      Serial.println("---------->STOPPED AT 10!");
+      Serial.println("---------->PASSED 10!");
     }
  
     if(previousCounter < 20 && counter >= 20) {
-      Serial.println("---------->STOPPED AT 20!");
+      Serial.println("---------->PASSED 20!");
     }
  
     if(previousCounter < 30 && counter >= 30) {
-      Serial.println("---------->STOPPED AT 30!");
+      Serial.println("---------->PASSED 30!");
     }
 
     previousCounter = counter;  // save counter for next time through the loop
   }
-  // Serial.print("  switch: ");
-  // Serial.println(digitalRead(SW));
-  // delay(1000);
 }
 
 void updateEncoder() {
