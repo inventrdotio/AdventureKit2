@@ -8,9 +8,10 @@ https://store-usa.arduino.cc/products/arduino-mega-2560-rev3?selectedStore=us
 [Hardware Pinout Diagram PDF](https://content.arduino.cc/assets/Pinout-Mega2560rev3_latest.pdf)
 
 ## Inventory checks
-* [000-Blink](000-Blink)
+* [000 Blink built-in LED](000-Blink)
 * [002 Light Emitting Diode](002-LightEmittingDiode)
 * [004 RGB Light Emitting Diode/](004-RGB-LightEmittingDiode)
+* [006 Photo Resistor](006-PhotoResistor)
 * [010 Active Buzzer](010-ActiveBuzzer)
 * [020 Passive Buzzer](020-PassiveBuzzer)
 * [030 Potentiometer](030-Potentiometer)
