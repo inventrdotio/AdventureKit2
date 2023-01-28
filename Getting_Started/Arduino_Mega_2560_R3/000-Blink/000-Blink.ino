@@ -17,14 +17,22 @@
  * David Schmidt
  */
 
+// The Arduino IDE defines a number of helpful constants/functions for each
+// supported board.  We include those definitions using a #include command.
 #include <arduino.h>
 
-// HIGH and LOW are defined by the Arduino IDE, but let's use ON and OFF for our LED lights.
-// This is often done using "#define", but a cleaner way is to define a "constant" variable;
-// one that cannot be changed once it is defined.
-// Here we define them as unsigned 8 bit integers (which is the type used by digitalWrite() below)
-const uint8_t ON  = HIGH;  // Set our "ON" state to a HIGH voltage
+/*
+  HIGH and LOW are defined by the Arduino IDE, but let's use ON and OFF for our LED lights.
+  This can be done in a number of ways, and you'll see each of them used in Arduino code:
+
+  #define OFF LOW          // Define OFF as HIGH
+  const uint8_t OFF = LOW; // OFF is a constant set to the value of HIGH
+  constexpr uint8_t ON = !OFF;   // ON is a constant initialized to the value of an expression
+*/
+
+// Here we define OFF and ON as unsigned 8 bit integers (which is the type used by digitalWrite() below)
 const uint8_t OFF = LOW;   // Set "OFF" to be a LOW voltage
+const uint8_t ON  = HIGH;  // Set our "ON" state to a HIGH voltage
 
 // The setup function runs once when you press reset or power the board
 void setup() {
