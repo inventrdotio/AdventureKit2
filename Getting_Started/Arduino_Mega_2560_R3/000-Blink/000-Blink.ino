@@ -15,6 +15,7 @@
  *
  * Alex Eschenauer
  * David Schmidt
+ * Linda V
  */
 
 // The Arduino IDE defines a number of helpful constants/functions for each
