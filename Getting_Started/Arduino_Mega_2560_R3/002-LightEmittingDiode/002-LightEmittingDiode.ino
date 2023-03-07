@@ -13,7 +13,7 @@
  * David Schmidt
  */
 
-int Light = 13; // The HERO Board Pin that the LED is wired to
+int Light = 2; // The HERO Board Pin that the LED is wired to
 
 // the setup function runs once when you press reset or power the board
 void setup() {
