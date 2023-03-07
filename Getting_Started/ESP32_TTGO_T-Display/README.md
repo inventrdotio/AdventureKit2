@@ -50,13 +50,34 @@ Overall, the LilyGo TTGO T-Display ESP32 is a powerful and versatile development
 * User Configuration AT + Instruction set, cloud server, android/iOSapp
 * OS FreeRTOS
 
-
 <img src="../../Devices/ESP32_TTGO_T-Display_v1_1.jpg" width="600">
 
-[Hardware Pinout Diagram PDF](https://content.arduino.cc/assets/Pinout-Mega2560rev3_latest.pdf)
+[TTGO T-Display GitHub](https://github.com/Xinyuan-LilyGO/TTGO-T-Display)
+[Schematic Diagram](https://github.com/Xinyuan-LilyGO/TTGO-T-Display/blob/master/schematic/ESP32-TFT(6-26).pdf)
+
+## Arduino IDE installation to support ESP32 TTGO T-Display
+Here are the step-by-step instructions for installing the Arduino IDE and configuring it to support the ESP32 TTGO T-Display:
+
+1. Download the Arduino IDE from the official website: https://www.arduino.cc/en/software
+2. Install the Arduino IDE on your computer.
+3. Open the Arduino IDE and click on "File" in the menu bar.
+4. Select "Preferences" from the dropdown menu.
+5. In the "Additional Boards Manager URLs" field, add the following URL: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json (Separate by commas or click blue button on right if you have multiple additional board manager URLs.)
+6. Click "OK" to close the preferences window.
+7. Go to "Tools" in the menu bar, and select "Board" from the dropdown menu.
+8. Select "Boards Manager" from the submenu.
+9. In the "Boards Manager" window, search for "ESP32".
+10. Click on "esp32 by Espressif Systems" and click the "Install" button.
+11. Wait for the installation to complete.
+12. Close the "Boards Manager" window.
+13. In the "Tools" menu, select "Board" again and select "ESP32 Dev Module" as the board.
+14. Connect the ESP32 TTGO T-Display to your computer using a USB-C cable.
+15. In the "Tools" menu, select "Port" and choose the correct port for your ESP32 TTGO T-Display.
+16. You are now ready to develop for the ESP32 TTGO T-Display using the Arduino IDE.
+
+Note: Some additional libraries may be required for developing with the ESP32 TTGO T-Display, depending on your specific project needs. You can find these libraries in the Arduino Library Manager, which can be accessed through the "Sketch" menu in the Arduino IDE.
 
 ## Inventory checks
-* [000 Blink built-in LED](000-Blink)
 * [002 Light Emitting Diode](002-LightEmittingDiode)
 * [004 RGB Light Emitting Diode/](004-RGB-LightEmittingDiode)
 * [006 Photo Resistor](006-PhotoResistor)
