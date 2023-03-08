@@ -1,6 +1,6 @@
 # Lesson 1 - Let's see if this stuff still works
 
-Looks like this old computer is still working.  I found it in on of the offices.  Whoever had that office must have been a collector of antique computers.  Glad he kept it in working condition!
-
-Look here's an old controller board I found in a display case, still in it's original wrapper.  Well, look at that, the name on this matches the name on the outside of the warehouse.  This display must have been here to show how inventr.io got started.  I bet we can use this "HERO XL" to control whatever we build.  It's pre-AI so it should be safe!
-
+| | | |
+| --- | --- | -- |
+| It looks like inventr.io had a company hand-on museum down in the basement.  It had working versions of their old products along with old laptops so kids could try them out.  They even installed a copy of the Internet from the 2020's that we can use just like people did back then!  | Please follow the link on the right for instructions on how to install the Arduino IDE for your system. | [Arduino IDE download](https://www.arduino.cc/en/software) |
+| Look, I found some inventr.io HERO XL boards in the museum.  These are pre-AI, so can't be infected and we can use these to control things here that the AI used to control. | HERO XL is a version of the open source Arduino Mega 2560.  It is the microcontroller board that is used in the initial lessons and provides (XX digital pins, XX analog pins, etc.) | (link to inventr.io HERO XL sales page) |
