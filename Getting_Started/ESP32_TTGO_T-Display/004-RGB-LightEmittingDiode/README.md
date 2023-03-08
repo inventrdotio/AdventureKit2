@@ -29,10 +29,10 @@ It's important to note that the value of the resistors are important to avoid ov
 ### Wiring
 | Arduino | LED |
 | --- | --- |
-| 7 | RED lead (alone next to GND) |
+| 13 | RED lead (alone next to GND) |
 | GND | common pin (longest) |
-| 6 | GREEN lead (between GND and BLUE) |
-| 5 | BLUE lead (next to GREEN) |
+| 15 | GREEN lead (between GND and BLUE) |
+| 2 | BLUE lead (next to GREEN) |
 
 <img src="RGB-LightEmittingDiode.png" width="350">
 
