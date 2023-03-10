@@ -22,7 +22,7 @@
  * - #include (https://www.arduino.cc/reference/en/language/structure/further-syntax/include/)
  * - #define (https://www.arduino.cc/reference/en/language/structure/further-syntax/define/)
  * - const (https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/const/)
- */ 
+ */
 
 /*
  * #include is used to include code and defines from other files.  While Arduino automtically
@@ -30,7 +30,7 @@
  * all of your Arduino sketches.
  */
 #include "Arduino.h"
- 
+
 /* Choosing what pin to use.
  * This project only needs digital pins.  So, on the Hero XL we *could* use any digital or analog pin
  * (D0-D53, A0-A15).  However, some pins support specialized functions and in later lessons we will be
@@ -59,8 +59,8 @@
  *  
  * Constants are often in all capital letters to emphasize that they are constants (though
  * this isn't required).
- */ 
-const int LIGHT = 22; // Set "LIGHT" to the HERO XL pin connected to the LED cathode (+) lead
+ */
+const int LIGHT = 22;  // Set "LIGHT" to the HERO XL pin connected to the LED cathode (+) lead
 
 // The setup function runs once when the sketch is run.  This is usually used for
 // one time initialization.
@@ -76,6 +76,6 @@ void loop() {                 // Blocks of code are contained between open and c
   digitalWrite(LIGHT, HIGH);  // Set our designated LIGHT pin to HIGH value (5V), or "on"
   delay(1000);                // Wait for 1 second (1000 microseconds)
 
-  digitalWrite(LIGHT, LOW);   // Now set our pin to LOW voltage (0V), or "off".
-  delay(1000);                // Wait one second.
-}                             // When we reach the end of the block of code the loop will repeat
+  digitalWrite(LIGHT, LOW);  // Now set our pin to LOW voltage (0V), or "off".
+  delay(1000);               // Wait one second.
+}  // When we reach the end of the block of code the loop will repeat
