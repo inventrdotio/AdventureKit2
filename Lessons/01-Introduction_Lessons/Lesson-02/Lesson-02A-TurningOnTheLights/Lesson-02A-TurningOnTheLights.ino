@@ -14,7 +14,7 @@
  */
 
 /*
- * Arduino language concepts introduced in this lesson.
+ * Arduino language concepts introduced/documented in this lesson.
  * - Arduino language.  Based on C++.  Optimized for use with microcontrollers and providing a simplified programming
  *   interface for hardware-specific tasks.
  * - Block Comments (like this one)  (https://www.arduino.cc/reference/en/language/structure/further-syntax/blockcomment/)
