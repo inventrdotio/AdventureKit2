@@ -52,6 +52,15 @@
 const uint8_t LIGHT = 22;         // LED on pin 22
 const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
 
+/*
+ * NOTE: Using a pull-up resistor can cause some confusion because the input pin connected
+ *       to our button will read HIGH when the button is NOT pressed, and LOW when the
+ *       button is pressed.  We can reduce this confusion a little by defining some
+ *       new constants for the state of our button: "PRESSED" and "NOT_PRESSED"
+ */
+const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
+const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
+
 // The setup function runs once when the sketch is run.  This is usually used for
 // one time initialization.
 void setup() {
@@ -64,10 +73,10 @@ void setup() {
  * turn on the light.  When released we turn off the light.
  */
 void loop() {
-  if (digitalRead(LIGHT_BUTTON) == LOW) {   // button is LOW when pressed
+  if (digitalRead(LIGHT_BUTTON) == PRESSED) {
     digitalWrite(LIGHT, HIGH);
   }
-  if (digitalRead(LIGHT_BUTTON) == HIGH) {  // button is HIGH when NOT pressed
+  if (digitalRead(LIGHT_BUTTON) == NOT_PRESSED) {
     digitalWrite(LIGHT, LOW);
   }
   delay(50);
