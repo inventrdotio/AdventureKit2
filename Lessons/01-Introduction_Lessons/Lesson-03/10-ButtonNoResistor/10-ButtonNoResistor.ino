@@ -7,7 +7,9 @@
  * When you release the button, the connection opens again.
  *
  * Button state is read on a digital input pin.  However, when the button is not pressed
- * the voltage level on the input pin will *float* and will randomly read HIGH or LOW.
+ * the input pin has NO connection to either +5V or Ground.  If you read a digital input pin
+ * with no connection the pin will randomly read HIGH or LOW.  This is called a floating
+ * pin.
  *
  * Alex Eschenauer
  * David Schmidt
