@@ -18,11 +18,11 @@
 /*
  * Arduino language concepts introduced in this lesson.
  *
- *  * Digital input pins
- *  * pinMode INPUT parameter
- *  * "Floating" inputs.  An input pin will read random values when not connected
+ *  - Digital input pins
+ *  - pinMode INPUT parameter
+ *  - "Floating" inputs.  An input pin will read random values when not connected
  *    to 5V or Ground.
- *  * "if" statement for making a decision based on button state.
+ *  - "if" statement for making a decision based on button state.
  */
 #include "Arduino.h"
 
@@ -53,14 +53,14 @@ void setup() {
   pinMode(LIGHT_BUTTON, INPUT);  // Button representing our light switch (input)
 }
 
-/*
- * In the loop we'll check to see if the button is pressed, and when it's pressed we'll
- * turn on the light.  When released we turn off the light.
- */
+
+// In the loop we'll check to see if the button is pressed, and when it's pressed we'll
+// turn on the light.  When released we turn off the light.
 void loop() {
   if (digitalRead(LIGHT_BUTTON) == HIGH) {
     digitalWrite(LIGHT, HIGH);
-  } else {
+  }
+  if (digitalRead(LIGHT_BUTTON) == LOW) {
     digitalWrite(LIGHT, LOW);
   }
   delay(50);

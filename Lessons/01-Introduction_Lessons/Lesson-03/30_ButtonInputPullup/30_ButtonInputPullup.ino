@@ -7,18 +7,20 @@
  * When you release the button, the connection opens again.
  *
  * Button state is read on a digital input pin.  However, when the button is not pressed
- * the voltage level on the input pin will *float* and will randomly read HIGH or LOW.
+ * the input pin has NO connection to either +5V or Ground.  If you read a digital input pin
+ * with no connection the pin will randomly read HIGH or LOW.  This is called a floating
+ * pin.
  *
- * We can connect our input pin to 5V so that when the button isn't pressed it will read
- * a constant value, just connecting it would cause our circuit to always draw significant
- * current.  By adding a resistor we can "pull" the voltage high without excessive current
- * draw.  This resistor is called a pull-up resistor.
+ * We can also connect our input pin through a pull-up resistor to +5V to use as a default
+ * value.  Our HERO XL even provides an internal pull-up resistor that does just that, so
+ * if we enable the build-in pull-up resistor we no longer need an external resistor connected
+ * to our button.
  *
- * When the button is pressed we connect our input pin to ground.  Since that path
- * does NOT have a resistor, the input pin will read LOW when the button is pressed.
+ * Now, when the button isn't pressed our input pin will read a HIGH value.  We will connect
+ * our buttons other side to GND so that when our button is pressed it will show a LOW value.
  *
- * The HERO XL has a built-in pull-up resistor and we can instruct the HERO XL to add it
- * using the INPUT_PULLUP mode in our pinMode() command.
+ * We enable the built-in pull-up resistor by setting our mode in the pinMode() statement
+ * to INPUT_PULLUP.
  *
  * Alex Eschenauer
  * David Schmidt
@@ -27,8 +29,9 @@
 /*
  * Arduino language concepts introduced in this lesson.
  *
- *  * Pull-up resistors
- *  * pinMode INPUT_PULLUP parameter
+ *  - pull-up resistors
+ *  - pinMode INPUT_PULLUP parameter
+ *  - Setting a constant to represent PRESSED
  */
 #include "Arduino.h"
 
@@ -55,28 +58,21 @@ const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
 /*
  * NOTE: Using a pull-up resistor can cause some confusion because the input pin connected
  *       to our button will read HIGH when the button is NOT pressed, and LOW when the
- *       button is pressed.  We can reduce this confusion a little by defining some
- *       new constants for the state of our button: "PRESSED" and "NOT_PRESSED"
+ *       button is pressed.  We can reduce this confusion a little by defining a
+ *       new constant for the state of our button: "PRESSED"
  */
 const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
-const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
 
-// The setup function runs once when the sketch is run.  This is usually used for
-// one time initialization.
 void setup() {
   pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
   pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
 }
 
-/*
- * In the loop we'll check to see if the button is pressed, and when it's pressed we'll
- * turn on the light.  When released we turn off the light.
- */
 void loop() {
+  // now the code tests to see if the pin is PRESSED, which makes more sense!
   if (digitalRead(LIGHT_BUTTON) == PRESSED) {
     digitalWrite(LIGHT, HIGH);
-  }
-  if (digitalRead(LIGHT_BUTTON) == NOT_PRESSED) {
+  } else {
     digitalWrite(LIGHT, LOW);
   }
   delay(50);

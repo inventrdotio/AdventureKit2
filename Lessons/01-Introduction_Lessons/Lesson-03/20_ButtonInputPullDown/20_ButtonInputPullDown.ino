@@ -7,14 +7,15 @@
  * When you release the button, the connection opens again.
  *
  * Button state is read on a digital input pin.  However, when the button is not pressed
- * the voltage level on the input pin will *float* and will randomly read HIGH or LOW.
+ * the input pin has NO connection to either +5V or Ground.  If you read a digital input pin
+ * with no connection the pin will randomly read HIGH or LOW.  This is called a floating
+ * pin.
  *
  * If we connect our input pin to ground through a pull-down resistor then the pin will
  * read LOW when not pressed, and HIGH when pressed.
  *
  * The HERO XL does NOT have a built-in pull-down resistor, so we will use an external
- * 10K resistor as our pull-down resistor.  The pinMode will be set to INPUT because the
- * external resistor will be our pull-down resistor.
+ * 10K resistor as our pull-down resistor.
  *
  * Alex Eschenauer
  * David Schmidt
@@ -23,7 +24,8 @@
 /*
  * Arduino language concepts introduced in this lesson.
  *
- *  * pull-down resistors
+ *  - pull-down resistors
+ *  - if-else statements
  */
 #include "Arduino.h"
 
@@ -47,28 +49,20 @@
 const uint8_t LIGHT = 22;         // LED on pin 22
 const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
 
-/*
- * NOTE: While HIGH/LOW now make more sense when using a pull-down resistor, it still
- *       makes even MORE clear using PRESSED / NOT_PRESSED.  However, now we set
- *       PRESSED equal to HIGH.
- */
-const uint8_t PRESSED = HIGH;     // Button input pin reads LOW when pressed
-const uint8_t NOT_PRESSED = LOW;  // Button input pin reads HIGH when NOT pressed
-
 void setup() {
   pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
   pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
 }
 
-/*
- * In the loop we'll check to see if the button is pressed, and when it's pressed we'll
- * turn on the light.  When released we turn off the light.
- */
 void loop() {
-  if (digitalRead(LIGHT_BUTTON) == PRESSED) {
+  // Since a digital pin can only have one of two values we can simplify our previous
+  // code a bit.  Rather than read the value a second time we can assume that if the
+  // light button isn't HIGH, it *must* be LOW.
+  // So "if" the value is HIGH then do the FIRST block of code, "else" do the SECOND
+  // block of code.
+  if (digitalRead(LIGHT_BUTTON) == HIGH) {
     digitalWrite(LIGHT, HIGH);
-  }
-  if (digitalRead(LIGHT_BUTTON) == NOT_PRESSED) {
+  } else {
     digitalWrite(LIGHT, LOW);
   }
   delay(50);
