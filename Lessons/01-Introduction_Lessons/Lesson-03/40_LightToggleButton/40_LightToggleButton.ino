@@ -7,14 +7,12 @@
  * When you release the button, the connection opens again.
  *
  * Button state is read on a digital input pin.  However, when the button is not pressed
- * the voltage level on the input pin will *float* and will randomly read HIGH or LOW.
+ * the input pin has NO connection to either +5V or Ground.  If you read a digital input pin
+ * with no connection the pin will randomly read HIGH or LOW.  This is called a floating
+ * pin.
  *
- * If we connect our input pin to ground through a pull-down resistor then the pin will
- * read LOW when not pressed, and HIGH when pressed.
- *
- * The HERO XL does NOT have a built-in pull-down resistor, so we will use an external
- * 10K resistor as our pull-down resistor.  The pinMode will be set to INPUT because the
- * external resistor will be our pull-down resistor.
+ * We're using the built-in pull-up resistor in the HERO XL, so our pin connected to the
+ * button will read HIGH when button is NOT pressed, and LOW when button is pressed.
  *
  * Alex Eschenauer
  * David Schmidt
@@ -54,36 +52,70 @@ const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
  *       makes even MORE clear using PRESSED / NOT_PRESSED.  However, now we set
  *       PRESSED equal to HIGH.
  */
-const uint8_t PRESSED = HIGH;     // Button input pin reads LOW when pressed
-const uint8_t NOT_PRESSED = LOW;  // Button input pin reads HIGH when NOT pressed
+const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
+const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
 
 void setup() {
   pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
   pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
 }
 
-bool light_on = false;
-bool previous_button_state = NOT_PRESSED;
+/*
+ * Here we'll declare some variables that will keep track of whether the light is on
+ * or off and what our button state was the *previous* time our loop() was executed.
+ *
+ * Declaring a variable means specifying its data type (such as int, float, or char),
+ * and giving it a name. The data type determines what kind of information the variable
+ * can hold, and the name is used to refer to the variable in your code.
+ *
+ * To use the least amount of storage possible, we typically declare variables with
+ * the smalledt type that can hold ALL possible values.  uint8_t is defined as an
+ * unsigned (can't be negative) number held in 8 bits.  It can hold values from 0 - 255.
+ *
+ * Variables have "scope", which refers to the area of the program where a variable is
+ * accessible or visible.  There are two primary types of variable scope:
+ *
+ * Local scope: A local variable is declared within a function or a block of code
+ * (enclosed by {} braces). It is only accessible within that function or block,
+ * and it's created when the function is called and destroyed when the function exits.
+ *
+ * Global scope: A global variable is declared outside any function or block of code,
+ * usually at the top of the program. It is accessible from any part of the program,
+ * including functions and blocks. Global variables are created when the program starts.
+ *
+ * Since these variables need to maintain their state between each execution of loop()
+ * we declare them here as Global variables.
+ */
+bool light_on = false;                     // we start with the light turned off
+bool previous_button_state = NOT_PRESSED;  // start out with button NOT pressed
 
 /*
- * In the loop we'll check to see if the button is pressed, and when it's pressed we'll
- * turn on the light.  When released we turn off the light.
+ * In the loop we'll check to see if the button has *just* been pressed or released and
+ * when it's pressed we'll toggle the light on/off.
  */
 void loop() {
-  int button_state = digitalRead(LIGHT_BUTTON);
+  // Since we only use the button state *inside* loop() we declare it here as a local variable.
+  uint8_t button_state = digitalRead(LIGHT_BUTTON);  // read current button state and save it
   
+  // first check to see if the button state has changed since last loop()
   if (button_state != previous_button_state) {
-    if (button_state == PRESSED) {
+    if (button_state == PRESSED) {  // if our NEW state is PRESSED this is a new button press
+      // then toggle our light, turning it of if it's on, and on if it's off.
       if (light_on) {
-        digitalWrite(LIGHT, LOW);
-        light_on = false;
-      } else {
-        digitalWrite(LIGHT, HIGH);
-        light_on = true;
+        digitalWrite(LIGHT, LOW);   // Light is on, turn it off
+        light_on = false;           // ... and save it's new state
+      } else {                      // Light must be off
+        digitalWrite(LIGHT, HIGH);  // turn on light
+        light_on = true;            // ... and save it's new state
       }
     }
+    // Since button state changed, let's save its current state for next time through loop()
+    previous_button_state = button_state;
   }
-  previous_button_state = button_state;        
 
+  // This delay isn't strictly necessary, but if we let the loop() run as quickly as it can
+  // then we will use more power than necessary.  Let's check for a change in the button
+  // state ever 20th of a second (1000 milliseconds / 20 = 50 milliseconds).  That is fast
+  // enough that it will appear instantaneous to our users.
   delay(50);
 }
