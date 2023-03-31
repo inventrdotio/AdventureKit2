@@ -8,8 +8,8 @@ converted to distance using the known speed of sound.
 
 
 ```
-constexpr uint8_t echoPin = 12  // attach pin D12 Arduino to pin Echo of HC-SR04
-constexpr uint8_t trigPin = 13  //attach pin D13 Arduino to pin Trig of HC-SR04
+constexpr uint8_t echoPin = 12;  // attach pin D12 Arduino to pin Echo of HC-SR04
+constexpr uint8_t trigPin = 13;  // attach pin D13 Arduino to pin Trig of HC-SR04
 
 long duration; // variable for the duration of sound wave travel
 
