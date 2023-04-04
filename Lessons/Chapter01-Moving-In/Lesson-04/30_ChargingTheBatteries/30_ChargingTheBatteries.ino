@@ -26,8 +26,6 @@
  *
  *  - Analog input pins
  *  - Serial console
- *  - Serial plotter
- *  - Floating point numbers/variables
  */
 #include "Arduino.h"
 
@@ -48,19 +46,17 @@
  * Recommended for fewest conflicts:
  *    D22-D43, D47-D49, A8-A15
  */
-const uint8_t LIGHT = 22;          // LED on pin 22
-const uint8_t LIGHT_BUTTON = 23;   // Button (light switch) on pin 23
+const uint8_t LIGHT = 22;         // LED on pin 22
+const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
 const uint8_t CHARGING_RATE = A8;  // Photoresistor input simulating battery charge rate
 
 /*
  * NOTE: While HIGH/LOW now make more sense when using a pull-down resistor, it still
  *       makes even MORE clear using PRESSED / NOT_PRESSED.  However, now we set
- *       PRESSED equal to HIGH.  We can also use ON / OFF for our lights.
+ *       PRESSED equal to HIGH.
  */
 const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
 const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
-const uint8_t ON = HIGH;           // Lights are ON when pin is HIGH
-const uint8_t OFF = LOW;           // Lights are OFF when pin is LOW
 
 // Here are some constants used to determine how much to add to our simulated battery every
 // time through our loop().  Many are also defined as floats to force the entire espression
@@ -72,7 +68,12 @@ const uint8_t OFF = LOW;           // Lights are OFF when pin is LOW
 const float LOW_BATTERY_LIMIT = 10;   // Turn off power use when battery charge drops below this value
 const float HIGH_BATTERY_LIMIT = 90;  // Stop charging battery here to minimize battery degredation
 
-const uint8_t SECONDS_TO_FULL = 10;    // For our simulation, fully charge battery in this many seconds
+// It is also hard on a battery when charging is started and stopped often.  Because of this, when we
+// start drawing power from our HIGH_BATTERY_LIMIT we won't begin to charge until battery level drops
+// below this level.
+const float START_CHARGING_AT = 85;  // Don't start charging unil battery level drops below this level
+
+const uint8_t SECONDS_TO_FULL = 30;    // For our simulation, fully charge battery in this many seconds
 const uint8_t LOOPS_PER_SECOND = 20;   // Run this many loops per second, quick enough for light switch
 const int AVERAGE_CHARGE_LEVEL = 530;  // Photoresistor reads approximately this value for room light.
 
@@ -122,42 +123,24 @@ float battery_charge_percentage = LOW_BATTERY_LIMIT;  // Battery level in percen
 bool light_on = false;                     // we start with the light turned off
 bool previous_button_state = NOT_PRESSED;  // start out with button NOT pressed
 
-// It is also hard on a battery when charging is started and stopped often.  Because of this, when the
-// battery is discharged below our HIGH_BATTERY_LIMIT we won't begin to charge until battery level drops
-// below this level.
-const float RESUME_CHARGING_AT = HIGH_BATTERY_LIMIT - 5.0;  // Don't start charging unil battery level drops below this level
-
-// Since we now cannot determine whether to charge by simply tracking the current battery level
-// we need to track whether our battery is currently charging or not.
-bool charging = true;
-
 void loop() {
-  /*
-   * We can do more than one thing inside our loop() code.  Since the photoresistor is new
-   * let's handle that first, but then we can still handle switching our light on/off.
-   */
   int current_charging_rate = analogRead(CHARGING_RATE);    // Read "charging rate" from our photoresistor (0-1023)
 
   // Using our constant from above, multiply our reading from the photoresistor by
   // that constant to see how much to add this loop()
   float new_charge = current_charging_rate * CHARGE_PER_LIGHT_UNIT;
- 
-  if (light_on) {
-    battery_charge_percentage = battery_charge_percentage - (CHARGE_PER_LIGHT_UNIT * AVERAGE_CHARGE_LEVEL * .8); // (2.0 / LOOPS_PER_SECOND);
-  }
-  if (charging) {
+
+  // Now add that bit of charge to our battery level if we're charging and not at our limit
+  if (charging && battery_charge_percentage < HIGH_BATTERY_LIMIT) {
     battery_charge_percentage += new_charge;
-  } 
-  if (battery_charge_percentage < RESUME_CHARGING_AT) {
-    charging = true;
   }
-  if (light_on && battery_charge_percentage < LOW_BATTERY_LIMIT) {
-    digitalWrite(LIGHT, OFF);  // Light is on, turn it off
-    light_on = false;          // ... and save it's new state
+
+  if (light_on) {
+    battery_charge_percentage = battery_charge_percentage - (CHARGE_PER_LIGHT_UNIT * AVERAGE_CHARGE_LEVEL * .8);
   }
+
   if (battery_charge_percentage > HIGH_BATTERY_LIMIT) {
     battery_charge_percentage = HIGH_BATTERY_LIMIT;
-    charging = false;
   }
 
   Serial.print(0);
@@ -168,30 +151,25 @@ void loop() {
   Serial.print(", ");
   Serial.println(map(current_charging_rate, 0, 1023, 0, 100));
 
-  // ========================================================================
-  
-  // Now let's check our light button and turn our light on/off appropriately.
+  // 
+  // Since we only use the button state *inside* loop() we declare it here as a local variable.
   uint8_t button_state = digitalRead(LIGHT_BUTTON);  // read current button state and save it
-
+  
   // first check to see if the button state has changed since last loop()
   if (button_state != previous_button_state) {
     if (button_state == PRESSED) {  // if our NEW state is PRESSED this is a new button press
       // then toggle our light, turning it of if it's on, and on if it's off.
       if (light_on) {
-        digitalWrite(LIGHT, OFF);  // Light is on, turn it off
-        light_on = false;          // ... and save it's new state
-      } else {                     // Light must be off
-        digitalWrite(LIGHT, ON);   // turn on light
-        light_on = true;           // ... and save it's new state
+        digitalWrite(LIGHT, LOW);   // Light is on, turn it off
+        light_on = false;           // ... and save it's new state
+      } else {                      // Light must be off
+        digitalWrite(LIGHT, HIGH);  // turn on light
+        light_on = true;            // ... and save it's new state
       }
     }
     // Since button state changed, let's save its current state for next time through loop()
     previous_button_state = button_state;
   }
 
-  // This delay isn't strictly necessary, but if we let the loop() run as quickly as it can
-  // then we will use more power than necessary.  Let's check for a change in the button
-  // state ever 20th of a second (1000 milliseconds / 20 = 50 milliseconds).  That is fast
-  // enough that it will appear instantaneous to our users.
-  delay(1000 / LOOPS_PER_SECOND);
+  delay(50);
 }

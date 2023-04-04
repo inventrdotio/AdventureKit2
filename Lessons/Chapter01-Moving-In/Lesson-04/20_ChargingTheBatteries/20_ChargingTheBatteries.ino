@@ -58,17 +58,43 @@ const uint8_t CHARGING_RATE = A8;  // Photoresistor input simulating battery cha
 const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
 const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
 
-/* Global Variables
- *
- * These variables need to maintain their state between runs of the loop so they
- * need to be defined with global variable scope.
- *
- * Since our battery will charge only a small amount every time through our loop
- * we need to track numbers smaller than 1.  Arduino language supports floating point
- * numbers (https://www.arduino.cc/reference/en/language/variables/data-types/float/)
- * and we'll use them in these sketches to track our battery charging.
- */
-float battery_charge_percentage = 15.0;  // Battery level in percent.  Starts out low.
+// Here are some constants used to determine how much to add to our simulated battery every
+// time through our loop().  Many are also defined as floats to force the entire espression
+// to use floating point math.
+
+// Many battery type can be damaged over time if always charged to 100% or fully discharged.  Thus,
+// in normal use we'll only charge up to the HIGH_BATTERY_LIMIT and turn off our batteries when
+// LOW_BATTERY_LIMIT is reached.
+const float LOW_BATTERY_LIMIT = 10;   // Turn off power use when battery charge drops below this value
+const float HIGH_BATTERY_LIMIT = 90;  // Stop charging battery here to minimize battery degredation
+
+// It is also hard on a battery when charging is started and stopped often.  Because of this, when we
+// start drawing power from our HIGH_BATTERY_LIMIT we won't begin to charge until battery level drops
+// below this level.
+const float START_CHARGING_AT = 85;  // Don't start charging unil battery level drops below this level
+
+const uint8_t SECONDS_TO_FULL = 30;    // For our simulation, fully charge battery in this many seconds
+const uint8_t LOOPS_PER_SECOND = 20;   // Run this many loops per second, quick enough for light switch
+const int AVERAGE_CHARGE_LEVEL = 530;  // Photoresistor reads approximately this value for room light.
+
+// Now, using those constants we can calculate (at average room light) how much to charge our battery
+// every time through our loop().  We could do this in one long calculation, but to show you how it was
+// derived we'll show every incremental step.
+
+// How many percentage points from our lowest charge to our highest charge?
+const float PERCENTAGE_FROM_EMPTY_TO_FULL = HIGH_BATTERY_LIMIT - LOW_BATTERY_LIMIT;
+
+// We want to simulate a full charge in SECONDS_TO_FULL, so we charge this much per second
+const float PERCENTAGE_PER_SECOND = PERCENTAGE_FROM_EMPTY_TO_FULL / SECONDS_TO_FULL;
+
+// To keep our light switch responsive, we run loop() many times per second using delay()
+// so we should add this much charge per loop() execution.
+const float PERCENTAGE_PER_LOOP = PERCENTAGE_PER_SECOND / LOOPS_PER_SECOND;
+
+// This value is how much charge to add to our battery for every unit read from our
+// photoresistor.  If our analog pin reads AVERAGE_CHARGE_LEVEL then we should reach
+// full charge in SECONDS_TO_FULL seconds.
+const float CHARGE_PER_LIGHT_UNIT = PERCENTAGE_PER_LOOP / AVERAGE_CHARGE_LEVEL;
 
 void setup() {
   // Intialize Serial class, used to communicate with the Arduino IDE Serial Monitor  
@@ -81,17 +107,39 @@ void setup() {
   pinMode(CHARGING_RATE, INPUT);        // Photoresistor analog input
 }
 
+/* Global Variables
+ *
+ * These variables need to maintain their state between runs of the loop so they
+ * need to be defined with global variable scope.  They're placed right above loop()
+ * for easy reference.
+ *
+ * Since our battery will charge only a small amount every time through our loop
+ * we need to track numbers smaller than 1.  Arduino language supports floating point
+ * numbers (https://www.arduino.cc/reference/en/language/variables/data-types/float/)
+ * and we'll use them in these sketches to track our battery charging.
+ */
+float battery_charge_percentage = LOW_BATTERY_LIMIT;  // Battery level in percent.  Starts out discharged.
+
 bool light_on = false;                     // we start with the light turned off
 bool previous_button_state = NOT_PRESSED;  // start out with button NOT pressed
 
 void loop() {
   int current_charging_rate = analogRead(CHARGING_RATE);    // Read "charging rate" from our photoresistor (0-1023)
 
+  // Using our constant from above, multiply our reading from the photoresistor by
+  // that constant to see how much to add this loop()
+  float new_charge = current_charging_rate * CHARGE_PER_LIGHT_UNIT;
+
+  // Now add that bit of charge to our battery level!
+  battery_charge_percentage += new_charge;
+
   Serial.print(0);
   Serial.print(", ");
-  Serial.print(1023);
+  Serial.print(100);
   Serial.print(", ");
-  Serial.println(current_charging_rate);
+  Serial.print(battery_charge_percentage);
+  Serial.print(", ");
+  Serial.println(map(current_charging_rate, 0, 1023, 0, 100));
 
   // 
   // Since we only use the button state *inside* loop() we declare it here as a local variable.
