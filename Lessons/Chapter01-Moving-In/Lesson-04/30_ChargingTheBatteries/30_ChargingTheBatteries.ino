@@ -24,8 +24,12 @@
 /*
  * Arduino language concepts introduced in this lesson.
  *
- *  - Analog input pins
- *  - Serial console
+ * - Analog input pins
+ * - Serial console
+ * - Serial plotter
+ * - Floating point numbers/variables
+ * - map()
+ * - += (compound addition)
  */
 #include "Arduino.h"
 
@@ -46,17 +50,19 @@
  * Recommended for fewest conflicts:
  *    D22-D43, D47-D49, A8-A15
  */
-const uint8_t LIGHT = 22;         // LED on pin 22
-const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
+const uint8_t LIGHT = 22;          // LED on pin 22
+const uint8_t LIGHT_BUTTON = 23;   // Button (light switch) on pin 23
 const uint8_t CHARGING_RATE = A8;  // Photoresistor input simulating battery charge rate
 
 /*
  * NOTE: While HIGH/LOW now make more sense when using a pull-down resistor, it still
  *       makes even MORE clear using PRESSED / NOT_PRESSED.  However, now we set
- *       PRESSED equal to HIGH.
+ *       PRESSED equal to HIGH.  We can also use ON / OFF for our lights.
  */
 const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
 const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
+const uint8_t ON = HIGH;           // Lights are ON when pin is HIGH
+const uint8_t OFF = LOW;           // Lights are OFF when pin is LOW
 
 // Here are some constants used to determine how much to add to our simulated battery every
 // time through our loop().  Many are also defined as floats to force the entire espression
@@ -68,12 +74,12 @@ const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT press
 const float LOW_BATTERY_LIMIT = 10;   // Turn off power use when battery charge drops below this value
 const float HIGH_BATTERY_LIMIT = 90;  // Stop charging battery here to minimize battery degredation
 
-// It is also hard on a battery when charging is started and stopped often.  Because of this, when we
+// It is hard on a battery when charging is started and stopped often.  Because of this, when we
 // start drawing power from our HIGH_BATTERY_LIMIT we won't begin to charge until battery level drops
 // below this level.
-const float START_CHARGING_AT = 85;  // Don't start charging unil battery level drops below this level
+const float RESUME_CHARGING_AT = HIGH_BATTERY_LIMIT - 5.0;
 
-const uint8_t SECONDS_TO_FULL = 30;    // For our simulation, fully charge battery in this many seconds
+const uint8_t SECONDS_TO_FULL = 15;    // For our simulation, fully charge battery in this many seconds
 const uint8_t LOOPS_PER_SECOND = 20;   // Run this many loops per second, quick enough for light switch
 const int AVERAGE_CHARGE_LEVEL = 530;  // Photoresistor reads approximately this value for room light.
 
@@ -97,10 +103,10 @@ const float PERCENTAGE_PER_LOOP = PERCENTAGE_PER_SECOND / LOOPS_PER_SECOND;
 const float CHARGE_PER_LIGHT_UNIT = PERCENTAGE_PER_LOOP / AVERAGE_CHARGE_LEVEL;
 
 void setup() {
-  // Intialize Serial class, used to communicate with the Arduino IDE Serial Monitor  
-  Serial.begin(9600);   // Initialize Serial, set speed to 9600 bits/second (baud)
+  // Intialize Serial class, used to communicate with the Arduino IDE Serial Monitor
+  Serial.begin(9600);  // Initialize Serial, set speed to 9600 bits/second (baud)
   while (!Serial) {
-    ; // wait for serial port to connect.
+    ;  // wait for serial port to connect.
   }
   pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
   pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
@@ -123,38 +129,72 @@ float battery_charge_percentage = LOW_BATTERY_LIMIT;  // Battery level in percen
 bool light_on = false;                     // we start with the light turned off
 bool previous_button_state = NOT_PRESSED;  // start out with button NOT pressed
 
+// Since we now cannot determine whether to charge by simply tracking the current battery level
+// we need to track whether our battery is currently charging or not.
+bool charging = true;
+
 void loop() {
-  int current_charging_rate = analogRead(CHARGING_RATE);    // Read "charging rate" from our photoresistor (0-1023)
+  /*
+   * We can do more than one thing inside our loop() code.  Since the photoresistor is new
+   * let's handle that first, but then we can still handle switching our light on/off.
+   */
+  int current_charging_rate = analogRead(CHARGING_RATE);  // Read "charging rate" from our photoresistor (0-1023)
 
   // Using our constant from above, multiply our reading from the photoresistor by
   // that constant to see how much to add this loop()
   float new_charge = current_charging_rate * CHARGE_PER_LIGHT_UNIT;
 
-  // Now add that bit of charge to our battery level if we're charging and not at our limit
-  if (charging && battery_charge_percentage < HIGH_BATTERY_LIMIT) {
+  // If we're currently charging add any new charge to our battery.
+  if (charging) {
     battery_charge_percentage += new_charge;
   }
 
+  // If our light is on, we subtract charge from the battery.  For our simulation, that
+  // amount is below our average charge reading so that the battery charge will increase
+  // during the "day" (though slower) and decrease when the charge rate drops (like at
+  // night.)
   if (light_on) {
     battery_charge_percentage = battery_charge_percentage - (CHARGE_PER_LIGHT_UNIT * AVERAGE_CHARGE_LEVEL * .8);
   }
 
-  if (battery_charge_percentage > HIGH_BATTERY_LIMIT) {
-    battery_charge_percentage = HIGH_BATTERY_LIMIT;
+  // If our light is on and our charge reaches our low battery limit then
+  // turn out the light.
+  if (light_on && battery_charge_percentage < LOW_BATTERY_LIMIT) {
+    digitalWrite(LIGHT, OFF);  // Light is on, turn it off
+    light_on = false;          // ... and save it's new state
   }
 
-  Serial.print(0);
-  Serial.print(", ");
-  Serial.print(100);
-  Serial.print(", ");
-  Serial.print(battery_charge_percentage);
-  Serial.print(", ");
-  Serial.println(map(current_charging_rate, 0, 1023, 0, 100));
+  // When battery reaches the high battery limit we turn off charging.  We do not
+  // turn it back on until we drop below the RESUME_CHARGING_AT level so that we
+  // don't turn the charging on/off ever time through the loop (which would be
+  // bad for our batteries).
+  if (battery_charge_percentage < RESUME_CHARGING_AT) {
+    charging = true;
+  }
 
-  // 
+  // If we've reached our high battery limit then turn off charging.  It will
+  // remain off until our battery charge drops below RESUME_CHARGING_AT.
+  if (battery_charge_percentage > HIGH_BATTERY_LIMIT) {
+    // battery_charge_percentage = HIGH_BATTERY_LIMIT;
+    charging = false;
+  }
+
+  // Output the numbers we wish to plot using the Serial Plotter.  The first two numbers
+  // are just to show the 0% and 100% charged points so the plotter won't continuously
+  // change the scale.
+  Serial.print(0);    // show line in plotter for 0% charge
+  Serial.print(", ");
+  Serial.print(100);  // show line in plotter for 100% charge
+  Serial.print(", ");
+  Serial.print(battery_charge_percentage);  // show current battery charge in percent
+  Serial.print(", ");
+  Serial.println(map(current_charging_rate, 0, 1023, 0, 100));  // show charge rate, in percent
+
+  // =========== Second part of loop is our prior button / LED control
+
   // Since we only use the button state *inside* loop() we declare it here as a local variable.
   uint8_t button_state = digitalRead(LIGHT_BUTTON);  // read current button state and save it
-  
+
   // first check to see if the button state has changed since last loop()
   if (button_state != previous_button_state) {
     if (button_state == PRESSED) {  // if our NEW state is PRESSED this is a new button press
@@ -171,5 +211,6 @@ void loop() {
     previous_button_state = button_state;
   }
 
-  delay(50);
+  // Set delay time to get our desired number of loop() runs per second.
+  delay(1000 / LOOPS_PER_SECOND);
 }
