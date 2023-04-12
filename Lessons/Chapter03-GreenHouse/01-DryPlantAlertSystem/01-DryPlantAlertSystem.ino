@@ -1,10 +1,9 @@
 //Arduino water level sensor code
 // CODE FROM: https://circuitdigest.com/microcontroller-projects/interfacing-water-level-sensor-with-arduino
-// Sensor pins pin D6 LED output, pin A0 analog Input
+// Sensor pins pin D22 LED output, pin A8 analog Input
 
-#define ledPin 6
-
-#define sensorPin A0
+#define ledPin 22
+#define sensorPin A8
 
 void setup() {
 
