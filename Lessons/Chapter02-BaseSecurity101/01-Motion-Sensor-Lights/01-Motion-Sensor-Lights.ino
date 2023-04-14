@@ -1,6 +1,6 @@
 
-const int MOTION_SENSOR_PIN = 7;   // Arduino pin connected to the OUTPUT pin of motion sensor
-const int LED_PIN           = 3;   // Arduino pin connected to LED's pin
+const int MOTION_SENSOR_PIN = 22;   // Arduino pin connected to the OUTPUT pin of motion sensor
+const int LED_PIN           = 24;   // Arduino pin connected to LED's pin
 int motionStateCurrent      = LOW; // current  state of motion sensor's pin
 int motionStatePrevious     = LOW; // previous state of motion sensor's pin
 
