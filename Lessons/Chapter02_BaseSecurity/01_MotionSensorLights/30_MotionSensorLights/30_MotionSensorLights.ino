@@ -37,18 +37,30 @@ const int MOTION_SENSOR = 23;  // PIR motion sensor pin
 const uint8_t ON = HIGH;
 const uint8_t OFF = LOW;
 
+bool previous_motion = false;  // previous state of motion sensor's pin
+
 void setup() {
+  Serial.begin(9600);             // initialize serial
   pinMode(MOTION_SENSOR, INPUT);  // set arduino pin to input mode
   pinMode(FLOOD_LIGHTS, OUTPUT);  // set arduino pin to output mode
 }
 
+unsigned long start_time;
+
 void loop() {
   bool motion_detected = digitalRead(MOTION_SENSOR);  // read new state
 
-  if (motion_detected) {  // motion detected
+  if (motion_detected && !previous_motion) {  // New motion detected
+    Serial.println("Motion detected!");
     digitalWrite(FLOOD_LIGHTS, ON);                  // turn on flood lights!
-  } else {  // motion delay expired
+    start_time = millis();
+  } else if (!motion_detected && previous_motion) {  // motion delay expired
+    float seconds = (millis() - start_time) / 1000.0;
+    Serial.print("Motion stopped after ");
+    Serial.print(seconds);
+    Serial.println(" seconds.");
     digitalWrite(FLOOD_LIGHTS, OFF);  // turn off the flood lights
   }
-  delay(100);
+  previous_motion = motion_detected;
+  delay(10);
 }
