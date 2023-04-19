@@ -52,7 +52,7 @@ void loop() {
 
   if (motion_detected && !previous_motion) {  // New motion detected
     Serial.println("Motion detected!");
-    digitalWrite(FLOOD_LIGHTS, ON);                  // turn on flood lights!
+    digitalWrite(FLOOD_LIGHTS, ON);  // turn on flood lights!
     start_time = millis();
   } else if (!motion_detected && previous_motion) {  // motion delay expired
     float seconds = (millis() - start_time) / 1000.0;

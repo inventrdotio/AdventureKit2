@@ -45,10 +45,9 @@ void setup() {
 void loop() {
   bool motion_detected = digitalRead(MOTION_SENSOR);  // read new state
 
-  if (motion_detected) {  // motion detected
-    digitalWrite(FLOOD_LIGHTS, ON);                  // turn on flood lights!
-  } else {  // motion delay expired
+  if (motion_detected) {              // motion detected
+    digitalWrite(FLOOD_LIGHTS, ON);   // turn on flood lights!
+  } else {                            // motion delay expired
     digitalWrite(FLOOD_LIGHTS, OFF);  // turn off the flood lights
   }
-  delay(100);
 }
