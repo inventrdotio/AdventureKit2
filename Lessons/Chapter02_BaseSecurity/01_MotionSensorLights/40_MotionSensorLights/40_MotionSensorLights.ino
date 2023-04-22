@@ -55,15 +55,22 @@ void loop() {
   if (motion_detected && !previous_motion) {  // New motion detected
     Serial.println("Motion detected!");
     digitalWrite(FLOOD_LIGHTS, ON);  // turn on flood lights!
+    delay_start = 0;                 // stop delay timer when motion detected
     start_time = millis();
   } else if (!motion_detected && previous_motion) {  // motion delay expired
-    Serial.println("Motion stopped");
-    delay_start = millis();
+    float seconds = (millis() - start_time) / 1000.0;
+    Serial.print("Motion stopped after ");
+    Serial.print(seconds);
+    Serial.println(" seconds.");
+    delay_start = millis();  // Start delay timer
   }
 
-  // If flood lights are on and we still don't have motion turn off the lights
+  // If flood lights are on and our timer expires then turn off the lights
   if (delay_start && (millis() - delay_start) / 1000 >= DELAY_SECONDS) {
-    Serial.println("Lights out");
+    float seconds = (millis() - start_time) / 1000.0;
+    Serial.print("Lights out after ");
+    Serial.print(seconds);
+    Serial.println(" seconds.");
     digitalWrite(FLOOD_LIGHTS, OFF);  // turn off the flood lights
     delay_start = 0;
   }
