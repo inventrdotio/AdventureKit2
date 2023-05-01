@@ -50,8 +50,8 @@ const uint8_t LIGHT = 22;         // LED on pin 22
 const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
 
 void setup() {
-  pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
-  pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
+  pinMode(LIGHT, OUTPUT);        // LED representing our light (output)
+  pinMode(LIGHT_BUTTON, INPUT);  // Button controlling light
 }
 
 void loop() {
