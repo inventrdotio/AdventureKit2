@@ -55,11 +55,6 @@ const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
 const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
 const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
 
-void setup() {
-  pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
-  pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
-}
-
 /*
  * Here we'll declare some variables that will keep track of whether the light is on
  * or off and what our button state was the *previous* time our loop() was executed.
@@ -86,8 +81,13 @@ void setup() {
  * Since these variables need to maintain their state between each execution of loop()
  * we declare them here as Global variables.
  */
-bool light_on = false;                     // we start with the light turned off
+bool light_on = NOT_PRESSED;               // we start with the light turned off
 bool previous_button_state = NOT_PRESSED;  // start out with button NOT pressed
+
+void setup() {
+  pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
+  pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
+}
 
 /*
  * In the loop we'll check to see if the button has *just* been pressed or released and
