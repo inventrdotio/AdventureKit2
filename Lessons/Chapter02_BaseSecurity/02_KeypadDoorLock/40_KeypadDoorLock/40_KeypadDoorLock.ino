@@ -32,8 +32,6 @@
 /*
  * Arduino language concepts introduced in this lesson.
  *
- * - Potentiometer
- * - Pulse Width Modulation (PWM)
  */
 #include "Arduino.h"
 

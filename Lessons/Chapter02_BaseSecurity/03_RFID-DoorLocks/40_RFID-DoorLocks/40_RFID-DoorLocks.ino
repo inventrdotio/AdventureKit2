@@ -1,4 +1,23 @@
 /*
+ * Day 0 - AI Apocalypse by inventr.io
+ * Learn more at https://inventr.io/PLACEHOLDER
+ *
+ * The door locks work, but again they were controlled by the building AI that’s been
+ * disabled.  We can lock the doors when we’re here, but it takes too long to have
+ * someone come open the door, and what do we if we all have to go out at the same
+ * time?  Let’s work on a way to unlock the doors from the outside using the keypads
+ * next to each door.
+ *
+ * Our 4x4 keypad leaves us somewhat vulnerable while standing there trying to press
+ * a bunch of small buttons in the right order.  It looks like our doors also have RFID
+ * readers on them, and our parts box has an RFID reader in it so we can wire one up
+ * here and write the code for our HERO XL so we can quickly unlock the doors.
+ *
+ * Alex Eschenauer
+ * David Schmidt
+ */
+
+/*
 CODE FROM https://www.youtube.com/watch?v=Kyz1w_T-MGo
 Interconnections from the RFID to the Arduino pins:
 Reset     > Pin 5
@@ -19,177 +38,76 @@ SCL > A5 pin of the Arduino
 
 
 #include <SPI.h>
-#include <RFID.h>
-#include "pitches.h"
-#include <LiquidCrystal_I2C.h>
-#include <Wire.h>
+#include <MFRC522.h>
+// #include "pitches.h"
+#include <LiquidCrystal.h>
+// #include <Wire.h>
 
+const uint8_t RST_PIN = 26;  // Configurable, see typical pin layout above
+const uint8_t SS_PIN = 53;   // Configurable, see typical pin layout above
 
-RFID rfid(10,5);
+MFRC522_SPI spiDevice = MFRC522_SPI(SS_PIN, RST_PIN);
+MFRC522 rfid = MFRC522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 
-byte datarfid[5] = {0x9D,0x49,0x26,0x75,0x87};
+const byte APPROVED[][10] = {
+  { 217, 205, 16, 20 }  // Recognized key fob
+};
 
-LiquidCrystal_I2C lcd(0x27,16,2);
+LiquidCrystal lcd(22, 24, 23, 25, 27, 29);
 
-byte serNum[5];
-byte data[5];
+void setup() {
+  Serial.begin(9600);
+  SPI.begin();
+  rfid.PCD_Init();
 
-
-int access_melody[] = {NOTE_G4,0,NOTE_A4,0, NOTE_B4,0,NOTE_A4,0,NOTE_B4,0, NOTE_C5,0};
-int access_noteDurations[] = {8,8,8,8,8,4,8,8,8,8,8,4};
-int fail_melody[] = {NOTE_G2,0,NOTE_F2,0,NOTE_D2,0};
-int fail_noteDurations[] = {8,8,8,8,8,4};
-
-int relay = 6;
-int LED_access = 2;
-int LED_intruder = 3;
-int speaker_pin = 8;
-const int buttonPin = 7;  
-int buttonState = 1;  
-
-void setup(){
- 
-  Serial.begin(9600); 
-  lcd.init(); 
-  lcd.backlight();
+  lcd.begin(16, 2);
   lcd.clear();
-  pinMode(buttonPin, INPUT);  
-  SPI.begin(); 
-  rfid.init(); 
- 
-  delay(1000);
-  pinMode(LED_access,OUTPUT);
-  pinMode(LED_intruder,OUTPUT);
-  pinMode(speaker_pin,OUTPUT);
-  pinMode(relay,OUTPUT);
-
+  lcd.setCursor(0, 0);
+  lcd.print("  Tap to Enter  ");
 }
- 
-void loop(){
- 
-  lcd.backlight();
-  { 
-  lcd.setCursor(0,0);
-  lcd.print("TEMPELKAN KARTU");
-  lcd.setCursor(0,1);
-  lcd.print("   RFID ANDA");
-  }
-  
-   buttonState = digitalRead(buttonPin);
-  
-   if (buttonState == LOW){
-   digitalWrite(relay,HIGH);
-   digitalWrite(LED_access,HIGH);
-   lcd.setCursor(0,0);
-   lcd.print("  Manual Aktif  ");
-   lcd.setCursor(0,1);
-   lcd.print("  Pintu Terbuka");
-   delay(7000);
-   digitalWrite(relay,LOW);
-   digitalWrite(LED_access,LOW);
-   lcd.clear();
-  }
-  
-  
-  boolean datarfid_card = true; 
-  
-  if (rfid.isCard()){ 
-    if (rfid.readCardSerial()){ 
-      delay(1000);
-      data[0] = rfid.serNum[0]; 
-      data[1] = rfid.serNum[1];
-      data[2] = rfid.serNum[2];
-      data[3] = rfid.serNum[3];
-      data[4] = rfid.serNum[4];
-    }
-  
-  
-  lcd.backlight();
- 
 
-  lcd.setCursor(0,0);
-  lcd.print("ID = ");
-  
-  if(data[0] < 16){
-    lcd.print("0");
-  }
-  lcd.print(data[0],HEX);
-  
-  if(data[1] < 16){
-    lcd.print("0");
-  }
-  lcd.print(data[1],HEX);
-  
-  if(data[2] < 16){
-    lcd.print("0");
-  }
-  lcd.print(data[2],HEX);
-  
-  if(data[3] < 16){
-    lcd.print("0");
-  }
-  lcd.print(data[3],HEX);
-  
-  if(data[4] < 16){
-    lcd.print("0");
-  }
-  lcd.print(data[4],HEX);
-  for(int i=0; i<5; i++){
-    if(data[i] != datarfid[i]) datarfid_card = false; 
-  lcd.setCursor(0,1);
-  lcd.print("                    "); 
-  }
-  Serial.println();
-     
-  if (datarfid_card){ 
+void loop() {
+  // Look for new cards
+  if (rfid.PICC_IsNewCardPresent()) {
 
-    
-    for (int i = 0; i < 12; i++){ 
-      int access_noteDuration = 1000/access_noteDurations[i];
-      tone(speaker_pin, access_melody[i],access_noteDuration);
-      int access_pauseBetweenNotes = access_noteDuration * 1.30;
-      delay(access_pauseBetweenNotes);
-      noTone(speaker_pin);
+    // Select one of the cards
+    if (rfid.PICC_ReadCardSerial()) {
+
+      if (rfid.uid.size == 0) {
+        Serial.println("Bad card (size = 0)");
+      } else {
+        char tag[sizeof(rfid.uid.uidByte) * 4] = { 0 };
+        Serial.print("UID size: ");
+        Serial.println(rfid.uid.size);
+        for (int i = 0; i < rfid.uid.size; i++) {
+          char buff[5];  // 3 digits, dash and \0.
+          snprintf(buff, sizeof(buff), "%s%d", i ? "-" : "", rfid.uid.uidByte[i]);
+          strncat(tag, buff, sizeof(tag));
+        };
+        Serial.println("Good scan: ");
+        Serial.println(tag);
+
+        Serial.println("Comparing: ");
+        for (int i = 0; i < (sizeof(APPROVED) / sizeof(APPROVED[0])); i++) {
+          lcd.setCursor(0, 1);
+          if (strncmp(rfid.uid.uidByte, APPROVED[i], rfid.uid.size) == 0) {
+            Serial.println("Matched");
+            lcd.print("  Come on in!   ");
+          } else {
+            lcd.print("    No Match    ");
+          }
+          delay(2000);
+          lcd.setCursor(0, 1);
+          lcd.print("                ");
+        }
+      };
+
+      // disengage with the card.
+      //
+      rfid.PICC_HaltA();
+
+    } else {
+      Serial.println("Bad read (was card removed too quickly?)");
     }
-  }
- 
-  else{ 
-    lcd.setCursor(0,1);
-    lcd.print(" Akses Ditolak");
-   
- 
-    digitalWrite(LED_intruder, HIGH); 
-    for (int i = 0; i < 6; i++){ 
-      int fail_noteDuration = 1000/fail_noteDurations[i];
-      tone(speaker_pin, fail_melody[i],fail_noteDuration);
-      int fail_pauseBetweenNotes = fail_noteDuration * 1.30;
-      delay(fail_pauseBetweenNotes);
-      noTone(speaker_pin);
-    }
-    delay(1000);
-    digitalWrite(LED_intruder, LOW); 
-    lcd.clear();
-  }
-  if (datarfid_card){
-    lcd.setCursor(0,1);
-    lcd.print(" Akses Diterima");
-    digitalWrite(LED_access,HIGH);
-    delay(1000);
-    lcd.setCursor(0,0);
-    lcd.print("  Pintu Terbuka  ");
-    lcd.setCursor(0,1);
-    lcd.print(" Silahkan Masuk  ");
-    digitalWrite(relay,HIGH); 
-    delay(7000);
-    digitalWrite(relay,LOW);
-    digitalWrite(LED_access,LOW);
-    lcd.clear();
-  }
-  
-  
-  Serial.println();
-  delay(10);
-  rfid.halt();
-  lcd.backlight();
   }
 }
