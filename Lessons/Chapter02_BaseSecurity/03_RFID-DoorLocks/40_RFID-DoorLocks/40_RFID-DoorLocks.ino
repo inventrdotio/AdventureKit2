@@ -95,8 +95,8 @@ void loop() {
           for (j = 0; j < rfid.uid.size; j++) {
             Serial.print("  byte: ");
             Serial.print(j);
-            char buff[8]; // space for 2 decimal bytes (0-255), a dash and terminating null
-            snprintf(buff, sizeof(buff), "  %d-%d", rfid.uid.uidByte[j], APPROVED[i][j]);
+            char buff[10]; // space for 2 decimal bytes (0-255), a dash and terminating null
+            snprintf(buff, sizeof(buff), ": %d-%d", rfid.uid.uidByte[j], APPROVED[i][j]);
             Serial.print(buff);
             // Do byte comparison here.
             if (rfid.uid.uidByte[j] != APPROVED[i][j]) {
