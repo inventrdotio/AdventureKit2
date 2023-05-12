@@ -1,10 +1,29 @@
+/*
+Hello! There is Tetris code for M5Stack, I edited code so now We can play this
+great game on TTGO T-Display and on M5StickC Plus. Game is played with only two
+push buttons . Fell free to use code and have fun playing this great game. Check
+my other games for TTGO and M5StickC.
+
+PLEASE SUBSCRIBE HERE:
+YouTube @volosprojects  
+
+CODE:
+TTGO T-Display version
+https://github.com/VolosR/TTGOTetris
+
+You can buy me coffe here , thank You: 
+https://ko-fi.com/volosprojects
+
+Thank You for Your time!!
+*/
+
+// Originally from:
 //========================================================================
 // TETRIS with M5STACK : 2018.01.20 Transplant by macsbug
 
 // Github     : https://macsbug.wordpress.com/2018/01/20/tetris-with-m5stack/
 //========================================================================
 
-// #include <SPI.h>
 // Use board: ESP32 Dev Module
 #include <TFT_eSPI.h>
 #if USER_SETUP_ID != 25
@@ -12,7 +31,6 @@
 #error "Edit libraries/TFT_eSPI/User_Setup_Select.h file and uncomment #include for Setup25_TTGO_T_Display.h"
 #endif
 #include "tet.h"
-
 
 TFT_eSPI tft = TFT_eSPI();
 
@@ -58,15 +76,14 @@ int leftButton = 0;
 int rightButton = 35;
 
 void setup(void) {
-
   pinMode(37, INPUT_PULLUP);
 
   pinMode(leftButton, INPUT_PULLUP);
   pinMode(rightButton, INPUT_PULLUP);
+
   tft.init();
   tft.setRotation(0);
   tft.setSwapBytes(true);
-
   tft.pushImage(0, 0, 135, 240, tet);
   delay(3000);
   tft.fillScreen(TFT_BLACK);
@@ -88,11 +105,11 @@ void setup(void) {
   make_block(7, 0xF8FC);     // _D_,DDD  PINK
   //----------------------------------------------------------------------
 
-
   PutStartPos();  // Start Position
   for (int i = 0; i < 4; ++i) screen[pos.X + block.square[rot][i].X][pos.Y + block.square[rot][i].Y] = block.color;
   Draw();  // Draw block
 }
+
 //========================================================================
 void loop() {
   if (gameover) {
@@ -122,6 +139,7 @@ void loop() {
     delay(game_speed);
   }  // SPEED ADJUST
 }
+
 //========================================================================
 void Draw() {  // Draw 120x240 in the center
   for (int i = 0; i < Width; ++i)
@@ -131,6 +149,7 @@ void Draw() {  // Draw 120x240 in the center
           backBuffer[j * Length + l][i * Length + k] = BlockImage[screen[i][j]][k][l];
   tft.pushImage(12, 20, 110, 220, *backBuffer);
 }
+
 //========================================================================
 void PutStartPos() {
   game_speed = 20;
@@ -151,6 +170,7 @@ bool GetSquares(Block block, Point pos, int rot, Point* squares) {
   }
   return !overlap;
 }
+
 //========================================================================
 void GameOver() {
   for (int i = 0; i < Width; ++i)
@@ -158,14 +178,15 @@ void GameOver() {
       if (screen[i][j] != 0) screen[i][j] = 4;
   gameover = true;
 }
+
 //========================================================================
 void ClearKeys() {
   but_A = false;
   but_LEFT = false;
   but_RIGHT = false;
 }
-//========================================================================
 
+//========================================================================
 bool KeyPadLoop() {
   if (digitalRead(leftButton) == 0 && digitalRead(rightButton) == 1) {
     if (pom == 0) {
@@ -188,8 +209,6 @@ bool KeyPadLoop() {
   } else {
     pom2 = 0;
   }
-
-
 
   if (digitalRead(37) == 0) {
     if (pom3 == 0) {
@@ -237,6 +256,7 @@ void GetNextPosRot(Point* pnext_pos, int* pnext_rot) {
     }
   }
 }
+
 //========================================================================
 void DeleteLine() {
   for (int j = 0; j < Height; ++j) {
@@ -261,6 +281,7 @@ void DeleteLine() {
     }
   }
 }
+
 //========================================================================
 void ReviseScreen(Point next_pos, int next_rot) {
   if (!started) return;
@@ -285,6 +306,7 @@ void ReviseScreen(Point next_pos, int next_rot) {
   }
   Draw();
 }
+
 //========================================================================
 void make_block(int n, uint16_t color) {  // Make Block color
   for (int i = 0; i < 12; i++)

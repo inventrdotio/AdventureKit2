@@ -13,4 +13,5 @@ https://github.com/VolosR/EspGauge
 * [EspGauge](EspGauge) - Semicircular 0-100% rotating gauge
 * [Color Picker](colorPicker) - Adjust RGB values to pick a hexadecimal 16 bit color value (uses external potentiometers)
 * [Car Dodge game](carDodgeGame) - Simple game to dodge oncoming cars
-* [Tetris](tetris) - Two button version of classic Tetris game (works nice!)
+* [Tetris game](tetris) - Two button version of classic Tetris game (works nice!)
+* [Alien Attack game](alienAttack) - Alien Attack game (a bit like Space invaders)
