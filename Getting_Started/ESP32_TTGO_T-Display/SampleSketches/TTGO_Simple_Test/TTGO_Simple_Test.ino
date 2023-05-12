@@ -1,7 +1,6 @@
 /*
     Simple Test for the TTGO T-Display ESP32
     Intent is to mame sure the buttons and the display work.
-    The display pins has hard coded to bypass the user_setup.h requirements
 
     Set board to "ESP32 Dev Module"
     If you have upload errors then go to "Tools/Upload Speed" and select the next lowest speed
