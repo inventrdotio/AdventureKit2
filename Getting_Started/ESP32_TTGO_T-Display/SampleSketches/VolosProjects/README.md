@@ -16,3 +16,4 @@ https://github.com/VolosR/EspGauge
 * [Tetris game](tetris) - Two button version of classic Tetris game (works nice!)
 * [Alien Attack game](alienAttack) - Alien Attack game (a bit like Space invaders)
 * [Internet Weather](weather) - Local weather/time from Internet
+* [Breakout game](breakout) - Breakout game
