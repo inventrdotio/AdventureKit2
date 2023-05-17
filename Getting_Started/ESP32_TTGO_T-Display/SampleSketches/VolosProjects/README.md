@@ -17,3 +17,4 @@ https://github.com/VolosR/EspGauge
 * [Alien Attack game](alienAttack) - Alien Attack game (a bit like Space invaders)
 * [Internet Weather](weather) - Local weather/time from Internet
 * [Breakout game](breakout) - Breakout game
+* [T-Rex game](T-Rex) - Bounce the T-Rex over cactus 
