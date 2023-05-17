@@ -1,5 +1,36 @@
+/*
+ * Day 0 - AI Apocalypse by inventr.io
+ * Learn more at https://inventr.io/PLACEHOLDER
+ *
+ * The door locks work, but again they were controlled by the building AI that’s been
+ * disabled.  We can lock the doors when we’re here, but it takes too long to have
+ * someone come open the door, and what do we if we all have to go out at the same
+ * time?  Let’s work on a way to unlock the doors from the outside using the keypads
+ * next to each door.
+ *
+ * The 4x4 Matrix Array Membrane Switch Keypad used in the sketches is a simple and
+ * cost-effective input device for Arduino projects. It consists of a 4x4 grid of BUTTONS,
+ * providing a total of 16 keys. Each key is labeled with a number, letter, or symbol,
+ * such as 0-9, A-D, *, and #.
+ *
+ * Let's make the feedback even better by adding an LCD1602 LCD character display.  That
+ * will allow us to give better instructions and feedback as the user enters the secret
+ * code.
+ *
+ * LCD stands for "Liquid Crystal Display." You might have seen these types of screens on
+ * calculators, microwaves, or digital clocks. The "1602" part means that this display has
+ * 16 columns and 2 rows, so you can show a total of 32 characters at once.
+ *
+ * The LCD1602 is like a tiny TV screen that shows letters, numbers, and symbols. It has a
+ * special controller that helps us communicate with it using our Arduino board. We can
+ * send messages to the screen and tell it what to display.
+ *
+ * Alex Eschenauer
+ * David Schmidt
+ */
+
 #include <Wire.h>
-#include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal.h>
 #include <MFRC522.h>
 #include <SPI.h>
 
