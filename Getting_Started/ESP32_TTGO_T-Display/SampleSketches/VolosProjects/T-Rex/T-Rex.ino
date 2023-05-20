@@ -1,3 +1,17 @@
+/*
+Hello! I made another game for TTGO T-Display board. 
+This is No Internet Google game, I think real  that name of this game is T-rex game. So 
+here it is, simple to play and very fun to make. In past I already made few games for 
+ttgo T-display board. But this is my first time that i used sprites, I started to play 
+with sprites 4 days ago and one of my subscribers helped me alot, so thank you Patrik .
+
+You can download code here:
+https://github.com/VolosR/TRexTTGOdisplay
+
+You can also buy me a COFFEE at:
+https://ko-fi.com/volosprojects
+*/
+
 #include <TFT_eSPI.h>
 #include "gameover.h"
 #include "noInternet.h"

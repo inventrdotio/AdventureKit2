@@ -1,8 +1,11 @@
 // Animates white pixels to simulate flying through a star field
 // updated 2020-11-09 for 135x240 TFT display of TTGO T-Display
 // From: https://kreier.github.io/t-display/
-#include <SPI.h>
 #include <TFT_eSPI.h>
+#if USER_SETUP_ID != 25
+#error "This sketch is for TFT_eSPI config 25 (TTGO_T_Display)."
+#error "Edit libraries/TFT_eSPI/User_Setup_Select.h file and uncomment #include for Setup25_TTGO_T_Display.h"
+#endif
 
 // Use hardware SPI
 TFT_eSPI tft = TFT_eSPI();

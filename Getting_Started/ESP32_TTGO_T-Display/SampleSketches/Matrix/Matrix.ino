@@ -18,7 +18,10 @@
 */
 
 #include <TFT_eSPI.h> // Hardware-specific library
-#include <SPI.h>
+#if USER_SETUP_ID != 25
+#error "This sketch is for TFT_eSPI config 25 (TTGO_T_Display)."
+#error "Edit libraries/TFT_eSPI/User_Setup_Select.h file and uncomment #include for Setup25_TTGO_T_Display.h"
+#endif
 
 TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
