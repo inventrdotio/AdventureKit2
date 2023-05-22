@@ -59,14 +59,13 @@ void loop(void) {
     xPos = 0;
   }
 
-  //tft.setRotation(2);
-  //tft.setTextColor(63 << 5, ILI9341_BLACK);
-  //tft.drawCentreString("MATRIX",120,60,4);
-  //tft.setRotation(0);
+  // tft.setRotation(2);
+  // tft.setTextColor(63 << 5, TFT_BLACK);
+  // tft.drawCentreString("MATRIX",120,60,4);
+  // tft.setRotation(0);
 
   // Now scroll smoothly forever
-  while (1) {yield(); yDraw = scroll_slow(320,5); }// Scroll 320 lines, 5ms per line
-
+  while (1) {yield(); yDraw = scroll_slow(320,5); } // Scroll 320 lines, 5ms per line
 }
 
 void setupScrollArea(uint16_t TFA, uint16_t BFA) {
