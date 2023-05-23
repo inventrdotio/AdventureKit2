@@ -2,6 +2,11 @@
  * Day 0 - AI Apocalypse by inventr.io
  * Learn more at https://inventr.io/PLACEHOLDER
  *
+ * T-Display version
+ * NOTE: PWM works differently than on the HERO XL.  We have to separately set up the
+ *       PWM channels and frequencies and attach those channels to the appropriate pins.
+ *       Lastly, use the ledcWrite() function instead of analogWrite().
+ *
  * Our homebuilt sonar is showing that, yes, there are AI "scouts" checking us out.
  *
  * It appears that they are receiving their commands via light based communications,
@@ -18,22 +23,30 @@
 #include <Stepper.h>  // Servo library for controlling our stepper motor
 
 // Joystick constants
-const uint8_t JOYSTICK_X = A8;
+const uint8_t JOYSTICK_X = 36;    // 
 // const uint8_t JOYSTICK_Y = A9;     // Just using X-Axis for our turret
-const uint8_t TRIGGER_PIN = 30;  // Pushing down on the top of the joystick fires our "gun"
+const uint8_t TRIGGER_PIN = 27;  // Pushing down on the top of the joystick fires our "gun"
 
 // Stepper motor controller constants.  We use the ULN2003 module to control our stepper motor
-const uint8_t STEPPER_IN1 = 22;
-const uint8_t STEPPER_IN2 = 24;
-const uint8_t STEPPER_IN3 = 26;
-const uint8_t STEPPER_IN4 = 28;
+const uint8_t STEPPER_IN1 = 2;
+const uint8_t STEPPER_IN2 = 17;
+const uint8_t STEPPER_IN3 = 22;
+const uint8_t STEPPER_IN4 = 21;
 const int STEPS_PER_REVOLUTION = 2038;                    // Motor requires 2038 pulses to go one revolution
 const int STEPS_PER_DEGREE = STEPS_PER_REVOLUTION / 360;  // So this many steps to move one degree
 
 // RGB LED (must use PWM pins)
-const uint8_t RED_PIN = 44;
-const uint8_t GREEN_PIN = 45;
-const uint8_t BLUE_PIN = 46;
+const uint8_t RED_PIN = 32;
+const uint8_t GREEN_PIN = 33;
+const uint8_t BLUE_PIN = 25;
+
+// T-Display needs more setup for PWM pins and uses a different command to write values to the LED
+const uint8_t PWM_RED_CHANNEL = 0;
+const uint8_t PWM_GREEN_CHANNEL = 1;
+const uint8_t PWM_BLUE_CHANNEL = 2;
+const int PWM_FREQUENCY = 5000;   // Frequency 5kHz
+const uint8_t PWM_RESOLUTION = 8;   // 8-bit resolution, i.e., values 0-255
+
 // Our button is INPUT_PULLUP, so it will be LOW when pressed.  This macro makes it easy to tell
 // when the fire button is pressed.
 #define FIRE_NOW (!digitalRead(TRIGGER_PIN))
@@ -53,16 +66,20 @@ void setup() {
   // is fastest recommened.
   my_stepper.setSpeed(15);
 
-  // RGB LED pins.
-  pinMode(RED_PIN, OUTPUT);
-  pinMode(GREEN_PIN, OUTPUT);
-  pinMode(BLUE_PIN, OUTPUT);
+  // RGB LED pins (NOTE: This is DIFFERENT than HERO XL / Arduino code for the ESP32 processor!)
+  ledcSetup(PWM_RED_CHANNEL, PWM_FREQUENCY, PWM_RESOLUTION);
+  ledcAttachPin(RED_PIN, PWM_RED_CHANNEL);
+  ledcSetup(PWM_GREEN_CHANNEL, PWM_FREQUENCY, PWM_RESOLUTION);
+  ledcAttachPin(GREEN_PIN, PWM_GREEN_CHANNEL);
+  ledcSetup(PWM_BLUE_CHANNEL, PWM_FREQUENCY, PWM_RESOLUTION);
+  ledcAttachPin(BLUE_PIN, PWM_BLUE_CHANNEL);
+
   // Try and pick some random seed value to give us different random numbers each time
-  randomSeed(analogRead(A3) * millis());
+  randomSeed(millis() * analogRead(JOYSTICK_X));
   // Set our initial RGB values to random values, 0-255
-  uint8_t red_value = map(random(), 0, RANDOM_MAX, 0, 255);
-  uint8_t green_value = map(random(), 0, RANDOM_MAX, 0, 255);
-  uint8_t blue_value = map(random(), 0, RANDOM_MAX, 0, 255);
+  uint8_t red_value = map(random(), 0, RAND_MAX, 0, 255);
+  uint8_t green_value = map(random(), 0, RAND_MAX, 0, 255);
+  uint8_t blue_value = map(random(), 0, RAND_MAX, 0, 255);
 
   // Confirm that RGB is wired correctly by briefly flashing Red, Green and then Blue
   setColor(255, 0, 0);
@@ -73,19 +90,17 @@ void setup() {
   delay(500);
 }
 
-// int scan_count = 0;  // How many sweeps have we made.
-
 void loop() {
   long loop_start = millis();  // note when loop starts
 
-  // Joystick values are analog from 0-1023.  The "idle" spot in the middle is somewhere around
-  // 500.  Since we only need a left/right indication we'll just make sure the joystick has moved
+  // Joystick values are analog from 0-4095.  The "idle" spot in the middle is somewhere around
+  // 2000.  Since we only need a left/right indication we'll just make sure the joystick has moved
   // left or right far enough from center.
-  if (analogRead(JOYSTICK_X) < 400) {    // Rotate counter clockwise with left joystick
+  if (analogRead(JOYSTICK_X) < 1500) {    // Rotate counter clockwise with left joystick
     my_stepper.step(-STEPS_PER_DEGREE);  // Step counter-clockwise 1 degree
   }
 
-  if (analogRead(JOYSTICK_X) > 600) {    // Rotate clockwise with right joystick
+  if (analogRead(JOYSTICK_X) > 2500) {    // Rotate clockwise with right joystick
     my_stepper.step(+STEPS_PER_DEGREE);  // Step clockwise 1 degree
   }
 
@@ -116,14 +131,14 @@ uint8_t blue_value;
 void fireLed() {
   setColor(red_value, green_value, blue_value);
   // Change RGB values at different rates/directions so our lights 
-  red_value -= 1;
+  red_value += 1;
   green_value += 2;
   blue_value += 3;
-  //  Serial.println("RGB: " + String(red_value) + "/" + String(green_value) + "/" + String(blue_value));
+  // Serial.println("RGB: " + String(red_value) + "/" + String(green_value) + "/" + String(blue_value));
 }
 
 void setColor(int redValue, int greenValue, int blueValue) {
-  analogWrite(RED_PIN, redValue);
-  analogWrite(GREEN_PIN, greenValue);
-  analogWrite(BLUE_PIN, blueValue);
+  ledcWrite(PWM_RED_CHANNEL, redValue);
+  ledcWrite(PWM_GREEN_CHANNEL, greenValue);
+  ledcWrite(PWM_BLUE_CHANNEL, blueValue);
 }
