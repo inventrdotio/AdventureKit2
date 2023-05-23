@@ -36,7 +36,7 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-constexpr uint8_t RST_PIN = 8;          // Configurable, see typical pin layout above
+constexpr uint8_t RST_PIN = 26;          // Configurable, see typical pin layout above
 constexpr uint8_t SS_PIN =  53;         // Configurable, see typical pin layout above
 
 MFRC522_SPI spiDevice = MFRC522_SPI(SS_PIN, RST_PIN);
@@ -63,7 +63,7 @@ MFRC522 mfrc522 = MFRC522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 // MFRC522 mfrc522 = MFRC522(spiDevice); 
 
 void setup() {
-  Serial.begin(115200);		// Initialize serial communications with the PC
+  Serial.begin(9600);		// Initialize serial communications with the PC
   while (!Serial);		// Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
 
   SPI.begin();
