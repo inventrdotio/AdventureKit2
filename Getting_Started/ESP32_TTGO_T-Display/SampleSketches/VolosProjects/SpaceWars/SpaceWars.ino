@@ -1,4 +1,7 @@
 
+// From: https://www.youtube.com/watch?v=KZMkGDyGjxQ
+//       https://github.com/VolosR/SpaceWars
+
 // Use board: ESP32 Dev Module
 #include <TFT_eSPI.h>
 #if USER_SETUP_ID != 25
@@ -6,24 +9,22 @@
 #error "Edit libraries/TFT_eSPI/User_Setup_Select.h file and uncomment #include for Setup25_TTGO_T_Display.h"
 #endif
 
+#include "splash_screen.h"
+#include "targets.h"
+#include "sensor_dish.h"
+
 #include "rocket.h"
 #include "brod1.h"
 #include "bulet.h"
 #include "ebullet.h"
 #include "life.h"
 #include "rover.h"
-#include "earth.h"
 #include "ex.h"
 #include "ex2.h"
 #include "ricon.h"
-#include "back2.h"
-#include "sens.h"
-#include "buum.h"
+#include "explosion.h"
 #include "gameOver.h"
 #include "pitches.h"
-
-#define BUZZER_PIN 27
-#define BUZZER_CHANNEL 0
 
 #define TFT_GREY 0x5AEB
 #define lightblue 0x2D18
@@ -32,7 +33,8 @@
 
 TFT_eSPI tft = TFT_eSPI();
 
-int brojac = 0;  // Invoke custom library
+int score = 0;  // Invoke custom library
+
 float bulletX[10] = { -20, -20, -20, -20, -20, -20, -20, -20, -20, -20 };
 float bulletY[10] = { -20, -20, -20, -20, -20, -20, -20, -20, -20, -20 };
 
@@ -41,6 +43,7 @@ float EbulletY[10] = { -20, -20, -20, -20, -20, -20, -20, -20, -20, -20 };
 
 float rocketX[10] = { -20, -20, -20, -20, -20, -20, -20, -20, -20, -20 };
 float rocketY[10] = { -20, -20, -20, -20, -20, -20, -20, -20, -20, -20 };
+
 float rocketSpeed = 0.22;
 int rockets = 3;
 
@@ -48,8 +51,8 @@ int counter = 0;
 int rcounter = 0;
 int Ecounter = 0;
 int level = 1;
-float x = 10;
-float y = 20;
+float player_x = 10;
+float player_y = 20;
 
 float ey = 18;
 float ex = 170;
@@ -82,46 +85,67 @@ int phase = 0;  // phase 0=start screen, phase 1=playing phase, phase 3=game ove
 float spaceX[30];
 float spaceY[30];
 
-const uint8_t UP_BUTTON = 22;        // Ship move UP button
-const uint8_t DOWN_BUTTON = 21;      // Ship move DOWN button
-const uint8_t LEFT_BUTTON = 2;       // Ship move LEFT button
-const uint8_t RIGHT_BUTTON = 17;     // Ship move RIGHT button
-const uint8_t FIRE_1_A_BUTTON = 0;  // Fire 1 / A Button
+const uint8_t BUZZER_PIN = 27;
+const uint8_t BUZZER_CHANNEL = 0;
+
+// Simple joystick with up/down/left/right/press_down buttons
+const uint8_t UP_BUTTON = 22;     // Ship move UP button
+const uint8_t DOWN_BUTTON = 21;   // Ship move DOWN button
+const uint8_t LEFT_BUTTON = 2;    // Ship move LEFT button
+const uint8_t RIGHT_BUTTON = 17;  // Ship move RIGHT button
+const uint8_t CENTER_BUTTON = 15;
+
+const uint8_t FIRE_1_A_BUTTON = 0;   // Fire 1 / A Button
 const uint8_t FIRE_2_B_BUTTON = 12;  // Fire 2 / B Button
 
-#define FIRE_1_PRESSED (digitalRead(FIRE_1_A_BUTTON) == 0)
+// T-Display constants
+const uint8_t T_DISPLAY_LEFT_BUTTON = 0;  // Buttons on T-Display itself
+const uint8_t T_DISPLAY_RIGHT_BUTTON = 35;
+
+const uint8_t LED_1 = 33;  // Red LED
+const uint8_t LED_2 = 25;  // Red LED
+const uint8_t LED_3 = 26;  // Red LED
+
+// #define FIRE_1_PRESSED (digitalRead(FIRE_1_A_BUTTON) == 0)
+#define FIRE_1_PRESSED (digitalRead(T_DISPLAY_LEFT_BUTTON) == 0)
 #define FIRE_2_PRESSED (digitalRead(FIRE_2_B_BUTTON) == 0)
 
 void setup(void) {
+  // "Joystick" buttons
   pinMode(DOWN_BUTTON, INPUT_PULLUP);
   pinMode(UP_BUTTON, INPUT_PULLUP);
   pinMode(RIGHT_BUTTON, INPUT_PULLUP);
   pinMode(LEFT_BUTTON, INPUT_PULLUP);
+  pinMode(CENTER_BUTTON, INPUT_PULLUP);  // stisak
+
   pinMode(FIRE_1_A_BUTTON, INPUT_PULLUP);  // fire 1 / A
   pinMode(FIRE_2_B_BUTTON, INPUT_PULLUP);  // fire 2 / B
-  pinMode(25, OUTPUT);                     // led2
-  pinMode(33, OUTPUT);                     // led1
-  pinMode(26, OUTPUT);                     // led3
-  pinMode(15, INPUT_PULLUP);               // stisak
-  pinMode(0, INPUT);                       // LORA built in buttons
-  pinMode(35, INPUT);
+
+  pinMode(LED_1, OUTPUT);  // led1
+  pinMode(LED_2, OUTPUT);  // led2
+  pinMode(LED_3, OUTPUT);  // led3
+
+  pinMode(T_DISPLAY_LEFT_BUTTON, INPUT_PULLUP);
+  pinMode(T_DISPLAY_RIGHT_BUTTON, INPUT_PULLUP);
+
   Serial.begin(9600);
-  digitalWrite(26, 1);
+  digitalWrite(LED_3, HIGH);
 
   tft.init();
   tft.setRotation(1);
-  tft.fillScreen(TFT_BLACK);
+  // tft.fillScreen(TFT_BLACK);
   tft.setSwapBytes(true);
-  tft.pushImage(0, 0, 240, 135, back2);
+  tft.pushImage(0, 0, 240, 135, SPLASH_SCREEN);
 
   for (int i = 0; i < 30; i++) {
     spaceX[i] = random(5, 235);
     spaceY[i] = random(18, 132);
   }
 
-  while (!FIRE_1_PRESSED)  // wait until button a is pressed.............
-    int nezz = 0;
-  digitalWrite(26, 0);
+  while (!FIRE_1_PRESSED) {}  // Wait for Button A press
+
+  Serial.println("A button pressed");
+  digitalWrite(LED_3, LOW);
 }
 
 void restart() {
@@ -129,8 +153,8 @@ void restart() {
   rcounter = 0;
   Ecounter = 0;
   level = 1;
-  x = 10;
-  y = 20;
+  player_x = 10;
+  player_y = 20;
   ey = 18;
   ex = 170;
   es = 0.1;
@@ -140,7 +164,7 @@ void restart() {
   rockets = 3;
   rDamage = 8;
   lives = 4;
-  brojac = 0;
+  score = 0;
   ri[0] = 0;
   ri[1] = 0;
   ri[2] = 0;
@@ -198,22 +222,23 @@ void newLevel() {
   tft.println("Rocket damage : " + String(rDamage));
   tft.println("Rocket speed : " + String(rocketSpeed));
 
-  tft.pushImage(170, 5, 55, 54, earth[level - 1]);
-  tft.pushImage(170, 61, 72, 72, sens);
+  tft.pushImage(170, 5, 55, 54, TARGETS[level - 1]);
+  tft.pushImage(170, 61, 72, 72, SENSOR_DISH);
   delay(2600);
 
-
-  while (!FIRE_1_PRESSED)  // wait until button a is pressed.............
-    int nezz = 0;
+  while (!FIRE_1_PRESSED) {}  // wait until button a is pressed.............
 
   tft.fillScreen(TFT_BLACK);
 
+  // Top and bottom borders
   tft.drawLine(0, 16, 240, 16, lightblue);
   tft.drawLine(0, 134, 240, 134, lightblue);
 
+  // Update current score
   tft.setCursor(200, 0, 2);
-  tft.print(brojac);
+  tft.print(score);
 
+  // Update enemy health bar
   tft.fillRect(120, 3, 70, 7, TFT_GREEN);
   tft.drawRect(119, 2, 72, 9, TFT_GREY);
 }
@@ -221,12 +246,10 @@ void newLevel() {
 void loop() {
   if (phase == 0) {
     restart();
-    tft.fillScreen(TFT_BLACK);
     tft.setSwapBytes(true);
-    tft.pushImage(0, 0, 240, 135, back2);
-    while (!FIRE_1_PRESSED) {
-      int nezz = 0;
-    }
+    tft.pushImage(0, 0, 240, 135, SPLASH_SCREEN);
+    while (!FIRE_1_PRESSED) {}
+
     tft.fillScreen(TFT_BLACK);
     tft.setCursor(0, 0, 4);
     tft.print("Level " + String(level));
@@ -240,13 +263,11 @@ void loop() {
     tft.println("Rocket damage : " + String(rDamage));
     tft.println("Rocket speed : " + String(rocketSpeed));
 
-    tft.pushImage(170, 5, 55, 54, earth[level - 1]);
-    tft.pushImage(170, 61, 72, 72, sens);
+    tft.pushImage(170, 5, 55, 54, TARGETS[level - 1]);
+    tft.pushImage(170, 61, 72, 72, SENSOR_DISH);
     delay(1000);
 
-
-    while (!FIRE_1_PRESSED)  // wait until button a is pressed.............
-      int nezz = 0;
+    while (!FIRE_1_PRESSED) {}  // wait until button a is pressed.............
 
     tft.fillScreen(TFT_BLACK);
 
@@ -254,7 +275,7 @@ void loop() {
     tft.drawLine(0, 134, 240, 134, lightblue);
 
     tft.setCursor(200, 0, 2);
-    tft.print(brojac);
+    tft.print(score);
 
     tft.fillRect(120, 3, 70, 7, TFT_GREEN);
     tft.drawRect(119, 2, 72, 9, TFT_GREY);
@@ -262,46 +283,52 @@ void loop() {
     phase = 1;
   }
 
-  if (phase == 1) {                                //playing phase
-    if (digitalRead(DOWN_BUTTON) == 0 and y < 94)  // Move down
-      y = y + speed;
+  const uint8_t PLAYER_Y_MAX = 94;    // Farthest down to move (DJS: compute this)
+  const uint8_t PLAYER_Y_MIN = 18;
+  const uint8_t PLAYER_X_MAX = 125;
+  const uint8_t PLAYER_X_MIN = 0;
 
-    if (digitalRead(UP_BUTTON) == 0 and y > 18)  //Move up
-      y = y - speed;
+  if (phase == 1) {                                // playing phase
+    if (digitalRead(DOWN_BUTTON) == 0 and player_y < PLAYER_Y_MAX)  // Move down
+      player_y += speed;
 
-    if (digitalRead(RIGHT_BUTTON) == 0 and x < 125)  //Move right
-      x = x + speed;
+    if (digitalRead(UP_BUTTON) == 0 and player_y > PLAYER_Y_MIN)  // Move up
+      player_y -= speed;
 
-    if (digitalRead(LEFT_BUTTON) == 0 and x > 0)  //Move right
-      x = x - speed;
+    if (digitalRead(RIGHT_BUTTON) == 0 and player_x < PLAYER_X_MAX)  // Move right
+      player_x += speed;
 
+    if (digitalRead(LEFT_BUTTON) == 0 and player_x > PLAYER_X_MIN)  // Move right
+      player_x -= speed;
+
+    // Fire 1 button just pressed (uses "pom" to debounce button)
     if (FIRE_1_PRESSED) {  // fire button A button
       if (pom == 0) {
         pom = 1;
 
-        bulletX[counter] = x + 34;
-        bulletY
-          [counter] = y + 15;
+        bulletX[counter] = player_x + 34;
+        bulletY[counter] = player_y + 15;
         counter = counter + 1;
       }
     } else
       pom = 0;
 
-    if (FIRE_2_PRESSED && rockets > 0)  //Rocket button B button
-    {
+    // Check for rocket fire if Fire 2 just got pressed (debounce using "pom")
+    if (FIRE_2_PRESSED && rockets > 0) { // Rocket button B button
       if (pom2 == 0) {
         pom2 = 1;
         rockets--;
-        rocketX[rcounter] = x + 34;
-        rocketY[rcounter] = y + 14;
-        rcounter = rcounter + 1;
+        rocketX[rcounter] = player_x + 34;
+        rocketY[rcounter] = player_y + 14;
+        rcounter += 1;
         ri[rockets] = -100;
+        // Clear fired rocket from status bar.
         tft.fillRect(70 + (rockets * 14), 0, 8, 14, TFT_BLACK);
       }
     } else
       pom2 = 0;
 
-    if (digitalRead(35) == 0)  //buton 35 , on and off sound
+    if (digitalRead(35) == 0)  // buton 35 , on and off sound
     {
       if (pom3 == 0) {
         pom3 = 1;
@@ -321,8 +348,8 @@ void loop() {
       }
     }
 
-    tft.pushImage(x, y, 49, 40, brod1);
-    tft.pushImage(ex, ey, 55, 54, earth[level - 1]);
+    tft.pushImage(player_x, player_y, 49, 40, brod1);
+    tft.pushImage(ex, ey, 55, 54, TARGETS[level - 1]);
 
     for (int i = 0; i < 10; i++) {  //firing buletts
       if (bulletX[i] > 0) {
@@ -333,7 +360,7 @@ void loop() {
         bulletX[i] = -30;
     }
 
-    for (int i = 0; i < 10; i++) {  //firing rockets
+    for (int i = 0; i < 10; i++) {  // firing rockets
       if (rocketX[i] > 0) {
         tft.pushImage(rocketX[i], rocketY[i], 24, 12, rocket);
         rocketX[i] = rocketX[i] + rocketSpeed;
@@ -342,7 +369,7 @@ void loop() {
         rocketX[i] = -30;
     }
 
-    for (int j = 0; j < 10; j++)  //did my bulet hit enemy
+    for (int j = 0; j < 10; j++)  // did my bulet hit enemy
     {
       if (bulletX[j] > ex + 20 && bulletY[j] > ey + 2 && bulletY[j] < ey + 52) {
         tft.pushImage(bulletX[j], bulletY[j], 12, 12, ex2);
@@ -354,16 +381,16 @@ void loop() {
         }
         tft.fillRect(bulletX[j], bulletY[j], 12, 12, TFT_BLACK);
         bulletX[j] = -50;
-        brojac = brojac + 1;
+        score += 1;
         tft.setCursor(200, 0, 2);
-        tft.print(brojac);
+        tft.print(score);
         eHealth--;
         tr = map(eHealth, 0, mHealth, 0, 70);
         tft.fillRect(120, 3, 70, 7, TFT_BLACK);
         tft.fillRect(120, 3, tr, 7, TFT_GREEN);
 
         if (eHealth <= 0) {
-          tft.pushImage(ex, ey, 55, 55, buum);
+          tft.pushImage(ex, ey, 55, 55, EXPLOSION);
           tone(BUZZER_PIN, NOTE_E4, 100);  //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_D4, 80);   //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_G5, 100);  //, BUZZER_CHANNEL);
@@ -378,7 +405,7 @@ void loop() {
       }
     }
 
-    for (int j = 0; j < 10; j++)  //did my ROCKET hit enemy
+    for (int j = 0; j < 10; j++)  // did my ROCKET hit enemy
     {
       if (rocketX[j] + 18 > ex && rocketY[j] > ey + 2 && rocketY[j] < ey + 52) {
         tft.pushImage(rocketX[j], rocketY[j], 24, 24, explosion);
@@ -392,16 +419,16 @@ void loop() {
         //delay(30);
 
         rocketX[j] = -50;
-        brojac = brojac + 12;
+        score += 12;
         tft.setCursor(200, 0, 2);
-        tft.print(brojac);
+        tft.print(score);
         eHealth = eHealth - rDamage;
         tr = map(eHealth, 0, mHealth, 0, 70);
         tft.fillRect(120, 3, 70, 7, TFT_BLACK);
         tft.fillRect(120, 3, tr, 7, TFT_GREEN);
 
         if (eHealth <= 0) {
-          tft.pushImage(ex, ey, 55, 55, buum);
+          tft.pushImage(ex, ey, 55, 55, EXPLOSION);
           tone(BUZZER_PIN, NOTE_E4, 100);  //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_D4, 80);   //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_G5, 100);  //, BUZZER_CHANNEL);
@@ -416,15 +443,15 @@ void loop() {
       }
     }
 
-    for (int j = 0; j < 10; j++)  //Am I hit
-    {
-      if (EbulletX[j] < x + 30 && EbulletX[j] > x + 4 && EbulletY[j] > y + 4 && EbulletY[j] < y + 36) {
+    for (int j = 0; j < 10; j++) { // Am I hit
+      if (EbulletX[j] < player_x + 30 && EbulletX[j] > player_x + 4 &&
+          EbulletY[j] > player_y + 4 && EbulletY[j] < player_y + 36) {
         EbulletX[j] = -50;
         ly[lives - 1] = -40;
         tft.fillRect((lives - 1) * 14, 0, 14, 14, TFT_BLACK);
         lives--;
         if (lives == 0) {
-          tft.pushImage(x, y, 55, 55, buum);
+          tft.pushImage(player_x, player_y, 55, 55, EXPLOSION);
           tone(BUZZER_PIN, NOTE_G4, 100);  //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_B4, 80);   //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_C5, 100);  //, BUZZER_CHANNEL);
@@ -463,16 +490,16 @@ void loop() {
       blinkTime = 0;
     }
 
-    for (int i = 0; i < 10; i++) {  //enemy shoots
+    for (int i = 0; i < 10; i++) {  // enemy shoots
       if (EbulletX[i] > -10) {
         tft.pushImage(EbulletX[i], EbulletY[i], 7, 7, ebullet);
         EbulletX[i] = EbulletX[i] - EbulletSpeed;
       }
     }
 
-    for (int i = 0; i < 4; i++)  //draw lifes
+    for (int i = 0; i < 4; i++)  // draw lifes
       tft.pushImage(i * 14, ly[i], 12, 11, life);
-    for (int i = 0; i < 3; i++)  //draw lifes
+    for (int i = 0; i < 3; i++)  // draw lifes
       tft.pushImage(70 + (i * 14), ri[i], 8, 14, ricon);
 
     fireCount++;
@@ -492,11 +519,11 @@ void loop() {
     if (Ecounter == 9)
       Ecounter = 0;
   }
-  if (phase == 2) {  //game over phase
+  if (phase == 2) {  // game over phase
     tft.fillScreen(TFT_BLACK);
     tft.pushImage(0, 0, 240, 135, gameOver);
     tft.setCursor(24, 54, 2);
-    tft.print("Score : " + String(brojac));
+    tft.print("Score : " + String(score));
     tft.setCursor(24, 69, 2);
     tft.print("Level : " + String(level));
     while (!FIRE_1_PRESSED) {
