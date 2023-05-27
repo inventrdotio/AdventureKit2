@@ -12,6 +12,9 @@
 #include "splash_screen.h"
 #include "targets.h"
 #include "sensor_dish.h"
+#include "explosion.h"
+#include "bullet_explosion.h"
+#include "rocket_explosion.h"
 
 #include "rocket.h"
 #include "brod1.h"
@@ -19,10 +22,7 @@
 #include "ebullet.h"
 #include "life.h"
 #include "rover.h"
-#include "ex.h"
-#include "ex2.h"
 #include "ricon.h"
-#include "explosion.h"
 #include "gameOver.h"
 #include "pitches.h"
 
@@ -54,17 +54,17 @@ int level = 1;
 float player_x = 10;
 float player_y = 20;
 
-float ey = 18;
-float ex = 170;
+float enemy_y = 18;
+float enemy_x = 170;
 
-float es = 0.1;
+float enemy_speed = 0.1;
 
-float bx = -50;
+// float bx = -50;
 float by = 0;
 
 int pom = 0;   // press debounce for fire
 int pom2 = 0;  // press debounce for rockets
-float speed = 0.42;
+float speed = 0.42;     // Initial speed for our ship
 int blinkTime = 0;
 int eHealth = 50;
 int mHealth = eHealth;
@@ -133,7 +133,6 @@ void setup(void) {
 
   tft.init();
   tft.setRotation(1);
-  // tft.fillScreen(TFT_BLACK);
   tft.setSwapBytes(true);
   tft.pushImage(0, 0, 240, 135, SPLASH_SCREEN);
 
@@ -155,10 +154,10 @@ void restart() {
   level = 1;
   player_x = 10;
   player_y = 20;
-  ey = 18;
-  ex = 170;
-  es = 0.1;
-  bx = -50;
+  enemy_y = 18;
+  enemy_x = 170;
+  // es = 0.1;
+  // bx = -50;
   by = 0;
 
   rockets = 3;
@@ -172,12 +171,12 @@ void restart() {
   ly[1] = 0;
   ly[2] = 0;
   ly[3] = 0;
-  ey = 44;
-  speed = 0.42;
-  eHealth = 50;
+  enemy_y = 44;
+  // speed = 0.42;
+  // eHealth = 50;
   mHealth = eHealth;
-  EbulletSpeed = 0.42;
-  rocketSpeed = 0.22;
+  // EbulletSpeed = 0.42;
+  // rocketSpeed = 0.22;
 
   for (int i = 0; i < 10; i++) {
     bulletX[i] = -20;
@@ -192,7 +191,7 @@ void newLevel() {
   EbulletSpeed = EbulletSpeed + 0.1;
   eHealth = 50 + (level * 5);
   mHealth = eHealth;
-  es = 0.05 + (0.035 * level);
+  enemy_speed = 0.05 + (0.035 * level);
 
   rockets = 3;
   rDamage = 8 + (level * 2);
@@ -201,7 +200,7 @@ void newLevel() {
   ri[1] = 0;
   ri[2] = 0;
 
-  ey = 44;
+  enemy_y = 44;
 
   for (int i = 0; i < 10; i++) {
     bulletX[i] = -20;
@@ -214,7 +213,7 @@ void newLevel() {
   tft.print("Level " + String(level));
   tft.setCursor(0, 22, 2);
 
-  tft.println("Enemy speed : " + String(es));
+  tft.println("Enemy speed : " + String(enemy_speed));
   tft.println("Enemy health : " + String(eHealth));
   tft.println("Enemy bullet speed : " + String(EbulletSpeed));
   tft.println("Remaining lives: " + String(lives));
@@ -255,7 +254,7 @@ void loop() {
     tft.print("Level " + String(level));
     tft.setCursor(0, 22, 2);
 
-    tft.println("Enemy speed : " + String(es));
+    tft.println("Enemy speed : " + String(enemy_speed));
     tft.println("Enemy health : " + String(eHealth));
     tft.println("Enemy bullet speed : " + String(EbulletSpeed));
     tft.println("Remaining lives: " + String(lives));
@@ -349,7 +348,7 @@ void loop() {
     }
 
     tft.pushImage(player_x, player_y, 49, 40, brod1);
-    tft.pushImage(ex, ey, 55, 54, TARGETS[level - 1]);
+    tft.pushImage(enemy_x, enemy_y, 55, 54, TARGETS[level - 1]);
 
     for (int i = 0; i < 10; i++) {  //firing buletts
       if (bulletX[i] > 0) {
@@ -371,8 +370,8 @@ void loop() {
 
     for (int j = 0; j < 10; j++)  // did my bulet hit enemy
     {
-      if (bulletX[j] > ex + 20 && bulletY[j] > ey + 2 && bulletY[j] < ey + 52) {
-        tft.pushImage(bulletX[j], bulletY[j], 12, 12, ex2);
+      if (bulletX[j] > enemy_x + 20 && bulletY[j] > enemy_y + 2 && bulletY[j] < enemy_y + 52) {
+        tft.pushImage(bulletX[j], bulletY[j], 12, 12, BULLET_EXPLOSION);
         if (sound == 1) {
           tone(BUZZER_PIN, NOTE_C5, 12);  //, BUZZER_CHANNEL);
           noTone(BUZZER_PIN);             //, BUZZER_CHANNEL);
@@ -390,7 +389,7 @@ void loop() {
         tft.fillRect(120, 3, tr, 7, TFT_GREEN);
 
         if (eHealth <= 0) {
-          tft.pushImage(ex, ey, 55, 55, EXPLOSION);
+          tft.pushImage(enemy_x, enemy_y, 55, 55, EXPLOSION);
           tone(BUZZER_PIN, NOTE_E4, 100);  //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_D4, 80);   //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_G5, 100);  //, BUZZER_CHANNEL);
@@ -407,8 +406,8 @@ void loop() {
 
     for (int j = 0; j < 10; j++)  // did my ROCKET hit enemy
     {
-      if (rocketX[j] + 18 > ex && rocketY[j] > ey + 2 && rocketY[j] < ey + 52) {
-        tft.pushImage(rocketX[j], rocketY[j], 24, 24, explosion);
+      if (rocketX[j] + 18 > enemy_x && rocketY[j] > enemy_y + 2 && rocketY[j] < enemy_y + 52) {
+        tft.pushImage(rocketX[j], rocketY[j], 24, 24, ROCKET_EXPLOSION);
         if (sound == 1) {
           tone(BUZZER_PIN, NOTE_C3, 40);  //, BUZZER_CHANNEL);
           noTone(BUZZER_PIN);             //, BUZZER_CHANNEL);
@@ -428,7 +427,7 @@ void loop() {
         tft.fillRect(120, 3, tr, 7, TFT_GREEN);
 
         if (eHealth <= 0) {
-          tft.pushImage(ex, ey, 55, 55, EXPLOSION);
+          tft.pushImage(enemy_x, enemy_y, 55, 55, EXPLOSION);
           tone(BUZZER_PIN, NOTE_E4, 100);  //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_D4, 80);   //, BUZZER_CHANNEL);
           tone(BUZZER_PIN, NOTE_G5, 100);  //, BUZZER_CHANNEL);
@@ -474,12 +473,11 @@ void loop() {
       }
     }
 
-    ey = ey + es;
-    if (ey > 80)
-      es = es * -1;
-
-    if (ey < 18)
-      es = es * -1;
+    // Move enemy ship up/down
+    enemy_y += enemy_speed;
+    // Reverse direction at top/bottom
+    if (enemy_y < 18 || enemy_y > 80)
+      enemy_speed *= -1;
 
     if (blinkTime > 0)
       blinkTime++;
@@ -504,8 +502,8 @@ void loop() {
 
     fireCount++;
     if (fireTime == fireCount) {
-      EbulletX[Ecounter] = ex + 5;
-      EbulletY[Ecounter] = ey + 24;
+      EbulletX[Ecounter] = enemy_x + 5;
+      EbulletY[Ecounter] = enemy_y + 24;
       fireCount = 0;
       fireTime = random(110 - (level * 15), 360 - (level * 30));
       Ecounter++;
@@ -526,9 +524,7 @@ void loop() {
     tft.print("Score : " + String(score));
     tft.setCursor(24, 69, 2);
     tft.print("Level : " + String(level));
-    while (!FIRE_1_PRESSED) {
-      int nezz = 0;
-    }
+    while (!FIRE_1_PRESSED);
     phase = 0;
   }
 }
