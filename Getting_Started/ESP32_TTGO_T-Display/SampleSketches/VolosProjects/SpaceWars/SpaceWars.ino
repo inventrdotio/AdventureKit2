@@ -59,9 +59,6 @@ float enemy_x = 170;
 
 float enemy_speed = 0.1;
 
-// float bx = -50;
-float by = 0;
-
 int pom = 0;   // press debounce for fire
 int pom2 = 0;  // press debounce for rockets
 float speed = 0.42;     // Initial speed for our ship
@@ -111,6 +108,8 @@ const uint8_t LED_3 = 26;  // Red LED
 #define FIRE_2_PRESSED (digitalRead(FIRE_2_B_BUTTON) == 0)
 
 void setup(void) {
+  Serial.begin(9600);
+
   // "Joystick" buttons
   pinMode(DOWN_BUTTON, INPUT_PULLUP);
   pinMode(UP_BUTTON, INPUT_PULLUP);
@@ -128,22 +127,25 @@ void setup(void) {
   pinMode(T_DISPLAY_LEFT_BUTTON, INPUT_PULLUP);
   pinMode(T_DISPLAY_RIGHT_BUTTON, INPUT_PULLUP);
 
-  Serial.begin(9600);
   digitalWrite(LED_3, HIGH);
-
-  tft.init();
-  tft.setRotation(1);
-  tft.setSwapBytes(true);
-  tft.pushImage(0, 0, 240, 135, SPLASH_SCREEN);
 
   for (int i = 0; i < 30; i++) {
     spaceX[i] = random(5, 235);
     spaceY[i] = random(18, 132);
   }
 
-  while (!FIRE_1_PRESSED) {}  // Wait for Button A press
+  tft.init();
+  tft.setRotation(1);
+  tft.setSwapBytes(true);
+  tft.pushImage(0, 0, 240, 135, SPLASH_SCREEN);
+  delay(700);
+  Serial.println("setup splash screen");
 
-  Serial.println("A button pressed");
+  // Wait for new press of Fire 1
+  while (FIRE_1_PRESSED);
+  while (!FIRE_1_PRESSED);
+  Serial.println("Past button press");
+
   digitalWrite(LED_3, LOW);
 }
 
@@ -156,9 +158,7 @@ void restart() {
   player_y = 20;
   enemy_y = 18;
   enemy_x = 170;
-  // es = 0.1;
-  // bx = -50;
-  by = 0;
+  enemy_speed = 0.1;
 
   rockets = 3;
   rDamage = 8;
@@ -189,13 +189,13 @@ void newLevel() {
   level++;
   speed = speed + 0.05;
   EbulletSpeed = EbulletSpeed + 0.1;
-  eHealth = 50 + (level * 5);
+  eHealth = 50 + ((level-1) * 5);
   mHealth = eHealth;
-  enemy_speed = 0.05 + (0.035 * level);
+  enemy_speed = 0.05 + (0.035 * (level-1));
 
   rockets = 3;
-  rDamage = 8 + (level * 2);
-  rocketSpeed = 0.22 + (level * 0.02);
+  rDamage = 8 + ((level-1) * 2);
+  rocketSpeed = 0.22 + ((level-1) * 0.02);
   ri[0] = 0;
   ri[1] = 0;
   ri[2] = 0;
@@ -223,9 +223,10 @@ void newLevel() {
 
   tft.pushImage(170, 5, 55, 54, TARGETS[level - 1]);
   tft.pushImage(170, 61, 72, 72, SENSOR_DISH);
-  delay(2600);
 
-  while (!FIRE_1_PRESSED) {}  // wait until button a is pressed.............
+  // Wait for new press of Fire 1
+  while (FIRE_1_PRESSED);
+  while (!FIRE_1_PRESSED);
 
   tft.fillScreen(TFT_BLACK);
 
@@ -245,9 +246,12 @@ void newLevel() {
 void loop() {
   if (phase == 0) {
     restart();
-    tft.setSwapBytes(true);
     tft.pushImage(0, 0, 240, 135, SPLASH_SCREEN);
-    while (!FIRE_1_PRESSED) {}
+    Serial.println("loop splash screen");
+    // Wait for new press of Fire 1
+    while (FIRE_1_PRESSED);
+    while (!FIRE_1_PRESSED);
+    Serial.println("Past button press");
 
     tft.fillScreen(TFT_BLACK);
     tft.setCursor(0, 0, 4);
@@ -264,9 +268,10 @@ void loop() {
 
     tft.pushImage(170, 5, 55, 54, TARGETS[level - 1]);
     tft.pushImage(170, 61, 72, 72, SENSOR_DISH);
-    delay(1000);
 
-    while (!FIRE_1_PRESSED) {}  // wait until button a is pressed.............
+  // Wait for new press of Fire 1
+  while (FIRE_1_PRESSED);
+  while (!FIRE_1_PRESSED);
 
     tft.fillScreen(TFT_BLACK);
 
@@ -517,6 +522,7 @@ void loop() {
     if (Ecounter == 9)
       Ecounter = 0;
   }
+
   if (phase == 2) {  // game over phase
     tft.fillScreen(TFT_BLACK);
     tft.pushImage(0, 0, 240, 135, gameOver);
@@ -524,6 +530,8 @@ void loop() {
     tft.print("Score : " + String(score));
     tft.setCursor(24, 69, 2);
     tft.print("Level : " + String(level));
+    // Wait for new press of Fire 1
+    while (FIRE_1_PRESSED);
     while (!FIRE_1_PRESSED);
     phase = 0;
   }
