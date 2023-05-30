@@ -3,7 +3,7 @@
 #include "SevSeg.h"
 
 // Pins
-const int buzzerPin = 2;
+const int buzzerPin = 45;
 
 // Objects
 RTC_DS3231 rtc;
@@ -25,9 +25,9 @@ void setup() {
   }
 
   // Configure SevSeg
-  byte numDigits = 4;
-  byte digitPins[] = {3, 4, 5, 6};
-  byte segmentPins[] = {7, 8, 9, 10, 11, 12, 13, A0}; // A0 for decimal point
+  byte numDigits = 4; // Number of Digits
+  byte digitPins[] = {2,3,4,5}; // Connects to Arduino digital pins 2 -> 5
+  byte segmentPins[] = {6, 7, 8, 9, 10, 11, 12, 13}; // Segments of the pins Pins
   bool resistorsOnSegments = false;
   byte hardwareConfig = COMMON_CATHODE;
   bool updateWithDelays = false;
