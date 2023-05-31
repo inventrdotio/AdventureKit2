@@ -5,9 +5,17 @@
 #define Gpin 3
 #define Bpin 4
 
+#define PowerButton 162
+#define RedOnButton 48
+#define RedOffButton 16
+#define BlueOnButton 122
+#define BlueOffButton 90
+#define GreenOnButton 24
+#define GreenOffButton 56
+
 IRrecv receiver(PIN_RECEIVER);
 
-int status=0;
+int powerOnStatus=0;
 
 void setup()
 {
@@ -30,13 +38,14 @@ void loop()
 void translateIR()
 {
   // Takes command based on IR code received
-  int x=receiver.decodedIRData.command;
-  Serial.println(x);
-  if (x==162)
+  int ButtonInput=receiver.decodedIRData.command;
+  Serial.println(ButtonInput); // prints the decoded button press - use this to figure out what works for your remote!
+  
+  if (ButtonInput==PowerButton) // power button was pressed
   {
-    if (status==0)
+    if (powerOnStatus==0) // currently off, launch boot up sequence
     {
-      status=1;
+      powerOnStatus=1;
       digitalWrite(Rpin,HIGH);
       digitalWrite(Gpin,HIGH);
       digitalWrite(Bpin,HIGH);
@@ -54,38 +63,37 @@ void translateIR()
       digitalWrite(Bpin,LOW);
 
     }
-    else if (status==1)
+    else if (powerOnStatus==1) // shut down sequence
     {
-      status=0;
+      powerOnStatus=0;
       digitalWrite(Rpin,LOW);
       digitalWrite(Gpin,LOW);
       digitalWrite(Bpin,LOW);
     }
   }
-  if (status==1)
+  if (powerOnStatus==1) // currently on
   {
-    switch (x)
+    switch (ButtonInput)
     {
-      case 48:
+      case RedOnButton:
       digitalWrite(Rpin,HIGH);
       break;
-      case 24:
+      case GreenOnButton:
       digitalWrite(Gpin,HIGH);
       break;
-      case 122:
+      case BlueOnButton:
       digitalWrite(Bpin,HIGH);
       break;
-      case 16:
+      case RedOffButton:
       digitalWrite(Rpin,LOW);
       break;
-      case 56:
+      case GreenOffButton:
       digitalWrite(Gpin,LOW);
       break;
-      case 90:
+      case BlueOffButton:
       digitalWrite(Bpin,LOW);
       break;
-      default:
-      int y=0;
+      default: //some other button was pressed, ignore
     }
   }
   }
