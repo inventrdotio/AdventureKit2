@@ -43,7 +43,7 @@ const uint8_t LIGHT = 44;          // LED on PWM pin
 const uint8_t LIGHT_BUTTON = 23;   // Button (light switch) on pin 23
 const uint8_t ALARM_PIN = 24;      // Active buzzer simulating our alarm speakers
 const uint8_t CHARGING_RATE = A8;  // Photoresistor input simulating battery charge rate
-const uint8_t LIGHT_DIMMER = A9;    // Our dimmer used to dim our lights.
+const uint8_t LIGHT_DIMMER = A9;   // Our dimmer used to dim our lights.
 
 /*
  * NOTE: While HIGH/LOW now make more sense when using a pull-down resistor, it still
@@ -71,7 +71,7 @@ const float HIGH_BATTERY_LIMIT = 90;  // Stop charging battery here to minimize 
 const float RESUME_CHARGING_AT = HIGH_BATTERY_LIMIT - 5.0;
 
 // Warn users when current charge level approaches lower limit
-const float LOW_BATTERY_WARNING = LOW_BATTERY_LIMIT + 5.0; 
+const float LOW_BATTERY_WARNING = LOW_BATTERY_LIMIT + 5.0;
 
 const uint8_t SECONDS_TO_FULL = 15;    // For our simulation, fully charge battery in this many seconds
 const uint8_t LOOPS_PER_SECOND = 20;   // Run this many loops per second, quick enough for light switch
@@ -134,11 +134,11 @@ bool charging = true;
 float previous_charge_percentage = battery_charge_percentage;
 
 // How long to delay while beeping the buzzer (in milliseconds).
-const int BUZZER_DELAY = 300;   // Delay this much while beeping the buzzer
+const int BUZZER_DELAY = 300;  // Delay this much while beeping the buzzer
 
-unsigned long buzzer_delay_start = 0; // when did our last buzzer state change
+unsigned long buzzer_delay_start = 0;  // when did our last buzzer state change
 
-const int TONES[] = {880, 698, 587};
+const int TONES[] = { 880, 698, 587 };
 bool playing_tones = false;
 int current_tone;
 
@@ -149,8 +149,8 @@ void loop() {
    */
   int current_charging_rate = analogRead(CHARGING_RATE);  // Read "charging rate" from our photoresistor (0-1023)
 
-  int dimmer_setting = analogRead(LIGHT_DIMMER);  // Read dimmer setting
-  int dimmer_percentage = map(dimmer_setting, 0, 1023, 100, 0); // Map to 0-100 percentage
+  int dimmer_setting = analogRead(LIGHT_DIMMER);                 // Read dimmer setting
+  int dimmer_percentage = map(dimmer_setting, 0, 1023, 100, 0);  // Map to 0-100 percentage
 
   // Using our constant from above, multiply our reading from the photoresistor by
   // that constant to see how much to add this loop()
@@ -166,17 +166,15 @@ void loop() {
   // during the "day" (though slower) and decrease when the charge rate drops (like at
   // night.)
   if (light_on) {
-    battery_charge_percentage = battery_charge_percentage - 
-      (CHARGE_PER_LIGHT_UNIT * AVERAGE_CHARGE_LEVEL * .8 * dimmer_percentage / 100);
+    battery_charge_percentage = battery_charge_percentage - (CHARGE_PER_LIGHT_UNIT * AVERAGE_CHARGE_LEVEL * .8 * dimmer_percentage / 100);
   }
 
   // Sound warning when battery level drops below warning
-  if (previous_charge_percentage >= LOW_BATTERY_WARNING &&
-      battery_charge_percentage < LOW_BATTERY_WARNING) {
+  if (previous_charge_percentage >= LOW_BATTERY_WARNING && battery_charge_percentage < LOW_BATTERY_WARNING) {
     playing_tones = true;
     current_tone = 0;
   }
-  
+
   if (playing_tones) {
     int current_millis = millis();  // Get current millis() count
     if (current_millis - buzzer_delay_start > BUZZER_DELAY) {
@@ -196,8 +194,8 @@ void loop() {
   // If our light is on and our charge reaches our low battery limit then
   // turn out the light.
   if (light_on && battery_charge_percentage < LOW_BATTERY_LIMIT) {
-    analogWrite(LIGHT, 0);  // Light is on, turn it off
-    light_on = false;          // ... and save it's new state
+    analogWrite(LIGHT, OFF);  // Light is on, turn it off
+    light_on = false;         // ... and save it's new state
   }
 
   // When battery reaches the high battery limit we turn off charging.  We do not
@@ -221,7 +219,7 @@ void loop() {
   // Output the numbers we wish to plot using the Serial Plotter.  The first two numbers
   // are just to show the 0% and 100% charged points so the plotter won't continuously
   // change the scale.
-  Serial.print(0);    // show line in plotter for 0% charge
+  Serial.print(0);  // show line in plotter for 0% charge
   Serial.print(", ");
   Serial.print(100);  // show line in plotter for 100% charge
   Serial.print(", ");
@@ -241,9 +239,10 @@ void loop() {
     if (button_state == PRESSED) {  // if our NEW state is PRESSED this is a new button press
       // then toggle our light, turning it of if it's on, and on if it's off.
       if (light_on) {
-        light_on = false;           // ... and save it's new state
-      } else {                      // Light must be off
-        light_on = true;            // ... and save it's new state
+        analogWrite(LIGHT, OFF);  // Light is on, turn it off
+        light_on = false;         // ... and save it's new state
+      } else {                    // Light must be off
+        light_on = true;          // ... and save it's new state
       }
     }
 
