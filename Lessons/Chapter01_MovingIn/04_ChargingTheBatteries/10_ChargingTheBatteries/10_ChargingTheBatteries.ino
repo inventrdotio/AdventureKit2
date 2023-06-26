@@ -51,9 +51,10 @@ const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
 const uint8_t CHARGING_RATE = A8;  // Photoresistor input simulating battery charge rate
 
 /*
- * NOTE: While HIGH/LOW now make more sense when using a pull-down resistor, it still
- *       makes even MORE clear using PRESSED / NOT_PRESSED.  However, now we set
- *       PRESSED equal to HIGH.
+ * NOTE: Using a pull-up resistor can cause some confusion because the input pin connected
+ *       to our button will read HIGH when the button is NOT pressed, and LOW when the
+ *       button IS pressed.  We can reduce this confusion a little by defining a
+ *       new constant for the state of our button: "PRESSED"
  */
 const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
 const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed

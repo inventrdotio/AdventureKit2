@@ -58,7 +58,7 @@ const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
 /*
  * NOTE: Using a pull-up resistor can cause some confusion because the input pin connected
  *       to our button will read HIGH when the button is NOT pressed, and LOW when the
- *       button is pressed.  We can reduce this confusion a little by defining a
+ *       button IS pressed.  We can reduce this confusion a little by defining a
  *       new constant for the state of our button: "PRESSED"
  */
 const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
