@@ -2,23 +2,14 @@
  * Day 0 - AI Apocalypse by inventr.io
  * Learn more at https://inventr.io/PLACEHOLDER
  *
- * OK, that works, but it's a bit clumsy to add more controls or pages.  It's also difficult
- * to run other code in our loop.  I did some research and found a library that makes
- * responding to web requests much easier, allowing us to create more complex sketches that
- * have more complex web sites AND also allow us to run more complex code in our loop().
+ * That sketch works, but it's still a bit inconvenient to connect to each T-Display's
+ * AP in order to control the lights.  When I'm connected to the T-Display I'm unable
+ * to do anything else, like browse our simulated Internet.
  *
- * The library is ESPAsyncWebServer and is installed as follows:
- * 1. Go to the GitHub repository for the ESPAsyncWebServer library: https://github.com/me-no-dev/ESPAsyncWebServer
- * 2. Click on the green “Code” button and select “Download ZIP” to download the library as a ZIP file.
- * 3. Open the Arduino IDE and go to Sketch > Include Library > Add .ZIP Library.
- * 4. Browse to the folder where you extracted the library and select the “ESPAsyncWebServer-master.zip” file.
- * 5. Click on the “Open” button to install the library.
- * 6. Wait for the installation process to finish.
- * 7. Once the installation is complete, you can use the library in your Arduino projects.
- *
- * We also need to load TFT_eSPI and Adafruit_GFX libraries, which are available from the Arduino
- * IDE Library Manager.
- *
+ * I found some old (NO AI!) WiFi Access points in the museum so let's just set up our
+ * own local WiFi network.  Then we can connect our Internet simulation AND our T-Display
+ * servers along with our other device.  Then we can access the Internet simulation AND our
+ * light controls at the same time.
  * Alex Eschenauer
  * David Schmidt
  */
@@ -34,7 +25,7 @@
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <ESPmDNS.h>
-//#include "Adafruit_GFX.h"
+#include "Adafruit_GFX.h"
 #include "TFT_eSPI.h"
 #if USER_SETUP_ID != 25
 #error "This sketch is for TFT_eSPI config 25 (TTGO_T_Display)."
@@ -43,10 +34,16 @@
 
 #define HOUSE_LIGHTS 2  // Change this according to your setup
 
-// Replace with your network credentials
-const char *ssid = "HouseLights";
-const char *password = "";
-const char HOSTNAME[] = "houselights";
+// Create the file "secrets.h" that contains the following two lines.  Replace the placeholders with your
+// local SSID and PASSWORD.  The secrets.h file will never be checked into a git repository (which would
+// expose your private network credentials).
+//
+// const char *SECRET_SSID = "YOUR SSID";
+// const char *SECRET_PASSWORD = "YOUR PASSWORD";
+#include "secrets.h"
+#define SSID SECRET_SSID
+#define PASSWORD SECRET_PASSWORD
+const char HOSTNAME[] = "Day0Survivors.io";
 
 TFT_eSPI tft = TFT_eSPI();  // Invoke custom library
 
@@ -58,6 +55,8 @@ extern const char HTML[];
 bool light_status = false;  // Keep track of current status of our light
 
 void setup() {
+  Serial.begin(115200);
+  delay(500);
   pinMode(HOUSE_LIGHTS, OUTPUT);
   digitalWrite(HOUSE_LIGHTS, LOW);
 
@@ -71,14 +70,12 @@ void setup() {
   tft.setTextDatum(MC_DATUM);
 
   // Connect to Wi-Fi
-  if (!WiFi.softAP(ssid, password)) {
-    Serial.println("Soft AP creation failed.");
-    while (1)
-      ;
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(SSID, PASSWORD);
+  if (WiFi.waitForConnectResult() != WL_CONNECTED) {
+    Serial.printf("WiFi Failed!\n");
+    return;
   }
-
-  tft.println("AP Started");
-  tft.println(WiFi.softAPIP());
 
   if (!MDNS.begin(HOSTNAME)) {  // Start mDNS service with hostname "myserver"
     Serial.println("Error setting up MDNS responder!");
@@ -86,6 +83,10 @@ void setup() {
     Serial.println("mDNS responder started - hostname: " + String(HOSTNAME));
     MDNS.addService("http", "tcp", 80);  // Add mDNS service
   }
+
+  tft.println("Connected to " + String(SSID));
+  tft.print("IP Address: ");
+  tft.println(WiFi.localIP());
 
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -140,7 +141,7 @@ const char HTML[] PROGMEM = R"rawliteral(
     padding: 20px 48px;
   }
   .led-off {
-    background-color: green;
+    background-color: LightGreen;
   }
   .led-on {
     background-color: red;
