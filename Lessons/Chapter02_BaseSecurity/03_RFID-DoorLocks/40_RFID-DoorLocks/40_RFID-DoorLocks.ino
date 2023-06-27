@@ -17,7 +17,7 @@
  * David Schmidt
  */
 
-
+// Install MFRC522-spi-i2c-uart-async from Library Manager
 #include <MFRC522.h>
 #include <LiquidCrystal.h>
 
