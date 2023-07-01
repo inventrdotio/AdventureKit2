@@ -180,16 +180,21 @@ void loop() {
     charging = false;
   }
 
-  // Output the numbers we wish to plot using the Serial Plotter.  The first two numbers
-  // are just to show the 0% and 100% charged points so the plotter won't continuously
-  // change the scale.
-  Serial.print(0);    // show line in plotter for 0% charge
+  // Output the numbers we wish to plot using the Serial Plotter.  
+  // The first two numbers are just to show the 0% and 100% charged points
+  // so the plotter won't continuously change the scale.
+  // Plot labels must preceed their variable, be enclosed in quotes, end with a colon, contain no spaces
+  Serial.print("0%:");    // Label for  0% charge
+  Serial.print(0);        // Show line in plotter for 0% charge
   Serial.print(", ");
-  Serial.print(100);  // show line in plotter for 100% charge
+  Serial.print("100%:");  // Label for  100% charge
+  Serial.print(100);      // Show line in plotter for 100% charge
   Serial.print(", ");
-  Serial.print(battery_charge_percentage);  // show current battery charge in percent
+  Serial.print("%-charged:");               // Label for battery_charge_percentage
+  Serial.print(battery_charge_percentage);  // Plot battery_charge_percentage variable
   Serial.print(", ");
-  Serial.println(map(current_charging_rate, 0, 1023, 0, 100));  // show charge rate, in percent
+  Serial.print("ChargeRate:");                                 // Label for battery_charge_percentage
+  Serial.println(map(current_charging_rate, 0, 100, 0, 100));  // Show charge rate in percent & set y-axis scale
 
   // =========== Second part of loop is our prior button / LED control
 
