@@ -17,15 +17,19 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-// 
+// This file contains secrets that shouldn't be shared with others.  We include
+// a template version named "secrets-template.h" which you should see in the list
+// of files above.  Open that file then immediately select File/Save and save it
+// as "secrets.h".  THEN open secrets.h and replace the placeholder values with
+// your own (secret) values.  Your secrets.h should never be shared with others.
 #include "secrets.h"
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(500);
 
   // Check if the secrets have been set
-  if (String(SSID) == "YOUR_SSID" || String(SSID_PASSWORD) == "YOUR_WIFI_PASSWORD"
+  if (String(SSID) == "YOUR_SSID" || String(SSID_PASSWORD) == "YOUR_SSID_PASSWORD"
       || String(USER_EMAIL) == "YOUR_EMAIL_ADDRESS" || String(API_KEY) == "YOUR_API_KEY") {
     Serial.println("Please update the secrets.h file with your credentials before running the sketch.");
     Serial.println("You need to replace YOUR_SSID and YOUR_WIFI_PASSWORD with your WiFi credentials.");
@@ -44,12 +48,13 @@ void setup() {
   // Initialize the HTTPClient object
   HTTPClient http;
 
-  // Construct the URL
+  // Construct the URL.  This will connect to the Day-0 survivor group we discovered
+  // and register our rough location.
   String url = "http://day-0.adventurekit2.com/survivors/register?";
   url += "api_key=" + String(API_KEY);
   url += "&email=" + String(USER_EMAIL);
 
-  // Make the HTTP GET request
+  // Make the HTTP GET request to register our group with the other survivors
   http.begin(url);
   int httpCode = http.GET();
 
