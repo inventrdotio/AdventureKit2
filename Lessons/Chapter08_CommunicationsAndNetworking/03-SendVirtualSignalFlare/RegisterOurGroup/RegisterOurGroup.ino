@@ -59,9 +59,10 @@ void setup() {
     String payload = http.getString();
     Serial.println("Response:");
     Serial.println(payload);
-  } else if (httpCode == HTTP_CODE_FORBIDDEN) {
-    // If the server responds with 403, print an error message
+  } else if (httpCode == HTTP_CODE_UNAUTHORIZED) {
+    // If the server responds with 401, print an error message
     Serial.println("Invalid email or API key.");
+    Serial.println(String(http.getString()));
   } else {
     // For any other HTTP response code, print it
     Serial.println("Received unexpected HTTP response:");
