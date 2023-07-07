@@ -20,12 +20,13 @@
 // This file contains secrets that shouldn't be shared with others.  We include
 // a template version named "secrets-template.h" which you should see in the list
 // of files above.  Open that file then immediately select File/Save and save it
-// as "secrets.h".  THEN open secrets.h and replace the placeholder values with
-// your own (secret) values.  Your secrets.h should never be shared with others.
+// as "secrets.h" in the SAME folder as this RegisterOurGroup.ino sketch.  THEN
+// open secrets.h and replace the placeholder values with your own (secret) values.
+// Your secrets.h should never be shared with others.
 #include "secrets.h"
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(500);
 
   // Check if the secrets have been set
