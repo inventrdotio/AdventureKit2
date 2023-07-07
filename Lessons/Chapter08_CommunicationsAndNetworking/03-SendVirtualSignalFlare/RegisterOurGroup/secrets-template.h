@@ -1,4 +1,3 @@
-
 // Replace with your network details
 const char* SSID = "YOUR_SSID";
 const char* SSID_PASSWORD = "YOUR_WIFI_PASSWORD";
