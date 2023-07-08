@@ -9,6 +9,7 @@
  *
  * Alex Eschenauer
  * David Schmidt
+ * Craig Florin
  */
 
 // The following two libraries are included with the ESP32 board definitions.
@@ -17,6 +18,9 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
+#include <SPI.h>
+#include <TFT_eSPI.h>
+ 
 // This file contains secrets that shouldn't be shared with others.  We include
 // a template version named "secrets-template.h" which you should see in the list
 // of files above.  Open that file then immediately select File/Save and save it
@@ -24,6 +28,15 @@
 // open secrets.h and replace the placeholder values with your own (secret) values.
 // Your secrets.h should never be shared with others.
 #include "secrets.h"
+
+#include "map_pin.h"
+#define GIF_IMAGE map_pin
+
+#include <AnimatedGIF.h>
+AnimatedGIF gif;
+
+// instantiate TFT screen object
+TFT_eSPI tft = TFT_eSPI();
 
 void setup() {
   Serial.begin(115200);
@@ -69,16 +82,34 @@ void setup() {
     // If the server responds with 401, print an error message
     Serial.println("Invalid email or API key.");
     Serial.println(String(http.getString()));
+    return;
   } else {
     // For any other HTTP response code, print it
     Serial.println("Received unexpected HTTP response:");
     Serial.println(httpCode);
+    return;
   }
 
   // End the HTTP connection
   http.end();
+
+  tft.begin();
+  tft.setRotation(3);
+  tft.fillScreen(TFT_BLACK);
+
+  gif.begin(BIG_ENDIAN_PIXELS);
 }
 
 void loop() {
-  // do nothing
+  if (gif.open((uint8_t *)GIF_IMAGE, sizeof(GIF_IMAGE), GIFDraw))
+  {
+    // Serial.printf("Successfully opened GIF; Canvas size = %d x %d\n", gif.getCanvasWidth(), gif.getCanvasHeight());
+    tft.startWrite(); // The TFT chip slect is locked low
+    while (gif.playFrame(true, NULL))
+    {
+      yield();
+    }
+    gif.close();
+    tft.endWrite(); // Release TFT chip select for other SPI devices
+  }
 }
