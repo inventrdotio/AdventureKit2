@@ -21,6 +21,14 @@
 #include <SPI.h>
 #include <TFT_eSPI.h>
  
+#include <TFT_eSPI.h> // Hardware-specific library
+#if USER_SETUP_ID != 25
+#error "This sketch is for TFT_eSPI config 25 (TTGO_T_Display)."
+#error "Edit libraries/TFT_eSPI/User_Setup_Select.h file and uncomment
+#error "#include for Setup25_TTGO_T_Display.h"
+#error "(commenting out any other configs that may be uncommented)"
+#endif
+
 // This file contains secrets that shouldn't be shared with others.  We include
 // a template version named "secrets-template.h" which you should see in the list
 // of files above.  Open that file then immediately select File/Save and save it
@@ -32,6 +40,8 @@
 #include "map_pin.h"
 #define GIF_IMAGE map_pin
 
+// If you get a compile error here, go to Tools/Manage Libraries and install
+// the AnimatedGIF library.
 #include <AnimatedGIF.h>
 AnimatedGIF gif;
 
@@ -101,12 +111,10 @@ void setup() {
 }
 
 void loop() {
-  if (gif.open((uint8_t *)GIF_IMAGE, sizeof(GIF_IMAGE), GIFDraw))
-  {
-    // Serial.printf("Successfully opened GIF; Canvas size = %d x %d\n", gif.getCanvasWidth(), gif.getCanvasHeight());
+  if (gif.open((uint8_t *)GIF_IMAGE, sizeof(GIF_IMAGE), GIFDraw)) {
     tft.startWrite(); // The TFT chip slect is locked low
-    while (gif.playFrame(true, NULL))
-    {
+    int frame = 0;
+    while (gif.playFrame(true, NULL)) {
       yield();
     }
     gif.close();
