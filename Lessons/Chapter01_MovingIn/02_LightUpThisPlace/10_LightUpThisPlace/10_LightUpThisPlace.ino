@@ -1,11 +1,31 @@
-/* [Any text between a slash/asterisk and an asterisk/slash is a comment and does not affect the code generated.]
+/* [Any text between a slash/asterisk and an asterisk/slash is a comment 
+ *  that does not affect the code generated.]
  *
  * Day 0 - AI Apocalypse by inventr.io
  * Learn more at https://inventr.io/PLACEHOLDER
  *
+ * While the walls at the old inventr.io site will give us better security,
+ * there aren't as many windows here so some of the rooms get pretty dark.
+ *
+ * The solar panels on the roof appear to be producing current so I've wired
+ * them directly into the building electrical system. They'll only give us power
+ * during the day, but it's a start.
+ *
+ * I've disabled the light switches that the office AI used to operate so
+ * we'll have to use the HERO XL to control the lights.
+ *
+ * Let's get started.
+ *
+ * The lights in the building are all efficient LED lights (can you believe
+ * they used to used to produce light by making a piece of wire glow?).
+ *
+ * Let's wire up one of these small LED's we found as we build our new light
+ * controller.  Then we can wire the HERO XL directly to our building lights
+ * once we have it working.
+ *
  * A light-emitting diode (LED) is a semiconductor device that emits light
  * when an electric current is passed through it. LEDs are small, efficient,
- * and long-lasting, making them ideal for a wide range of applications such
+ * cool and long-lasting, making them ideal for a wide range of applications such
  * as indicator lights, digital displays, and lighting. They are available
  * in a variety of colors and sizes.
  *
@@ -15,13 +35,18 @@
 
 /*
  * Arduino language concepts introduced/documented in this lesson.
- * - Arduino language.  Based on C++.  Optimized for use with microcontrollers and providing a simplified programming
- *   interface for hardware-specific tasks.
- * - Block Comments (like this one)  (https://www.arduino.cc/reference/en/language/structure/further-syntax/blockcomment/)
- * - Single Line comments (https://www.arduino.cc/reference/en/language/structure/further-syntax/singlelinecomment/)
- * - #include (https://www.arduino.cc/reference/en/language/structure/further-syntax/include/)
- * - #define (https://www.arduino.cc/reference/en/language/structure/further-syntax/define/)
- * - const (https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/const/)
+ * - Arduino language.  Based on C++.  Optimized for use with microcontrollers
+ *   and providing a simplified programming interface for hardware-specific tasks.
+ * - Block Comments (like this one)
+ *   (https://www.arduino.cc/reference/en/language/structure/further-syntax/blockcomment/)
+ * - Single Line comments
+ *   (https://www.arduino.cc/reference/en/language/structure/further-syntax/singlelinecomment/)
+ * - #include
+ *   (https://www.arduino.cc/reference/en/language/structure/further-syntax/include/)
+ * - #define - defines a constant or creates a short macro
+ *   (https://www.arduino.cc/reference/en/language/structure/further-syntax/define/)
+ * - const - newer and recommended way to define constants
+ *   (https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/const/)
  */
 
 /*
@@ -50,32 +75,51 @@
  */
 
 /*
- * Rather than use the same number throughout the sketch we can define the value
- * to a name and use the name wherever we would have used the value.  To indicate
- * that these are read-only, we add the "const" qualifier to the variable declaration.
- * 
+ * We *could* just use a number in our code whenever we need to control a pin, but
+ * that would make it very tedius if the pin number needs to change.  We'd have to
+ * go through all of our code and change each line that contained that pin number.
+ *
+ * We'd also risk accidently changing code that happened to use the SAME number, but
+ * for something other than a pin number.
+ *
+ * The Arduino Language (C++) provides a way to avoid these issues by letting us
+ * define a name in our code and assign it a value.  Then we just use the name instead
+ * of that value whenever we need that value.  If the value changes, we only have
+ * to change it in ONE place.
+ *
+ * This also makes our code more understandable.  Which of these commands is easier to
+ * understand, "digitalWrite(22, 1)" or "digitalWrite(LIGHT_PIN, ON)"?
+ *
+ * Names can be used to define "variables" (that can change value as our code executes)
+ * or "constants" (values that don't change).  To indicate a value that cannot change
+ * we preface the name with "const" to indicate that this is a constant that will not
+ * change.
+ *
  * While "#define" is often used for this type of naming it can sometimes have some
  * bad side effects.  Because of this, const is the preferred way to define constants.
  *  
  * Constants are often in all capital letters to emphasize that they are constants (though
  * this isn't required).
  */
-const int LIGHT = 22;  // Set "LIGHT" to the HERO XL pin connected to the LED cathode (+) lead
+const int LIGHT_PIN = 22;  // Create the constant "LIGHT_PIN" defining pin connected to our LED
+
+// Set up two constants so that we can turn our light "on" or "off".
+const uint8_t ON = HIGH;  // HIGH is defined in Arduino.h to output 5 volts to a pin
+const uint8_t OFF = LOW;  // LOW is defined to turn a pin "off" (low voltage)
 
 // The setup function runs once when the sketch is run.  This is usually used for
 // one time initialization.
 void setup() {
-  // initialize digital pin defined by "LIGHT" as an output pin.
-  pinMode(LIGHT, OUTPUT);
+  pinMode(LIGHT_PIN, OUTPUT);  // instruct HERO XL that LIGHT_PIN will be used for output
 }
 
 // The loop function runs over and over again forever
-// This loop turns our LIGHT on (HIGH voltage), delays one second, turns it off (LOW voltage)
+// This loop turns our light on (HIGH voltage), delays one second, turns it off (LOW voltage)
 // and then delays one second.  This loop will repeat forever, blinking our LED on/off.
-void loop() {                 // Blocks of code are contained between open and close braces ("{}")
-  digitalWrite(LIGHT, HIGH);  // Set our designated LIGHT pin to HIGH value (5V), or "on"
-  delay(1000);                // Wait for 1 second (1000 microseconds)
+void loop() {                   // Blocks of code are contained between open and close braces ("{}")
+  digitalWrite(LIGHT_PIN, ON);  // Turn our designated LIGHT_PIN pin ON ("HIGH", or 5V)
+  delay(1000);                  // Wait for 1 second (1000 microseconds)
 
-  digitalWrite(LIGHT, LOW);  // Now set our pin to LOW voltage (0V), or "off".
-  delay(1000);               // Wait one second.
+  digitalWrite(LIGHT_PIN, OFF);  // Now turn our pin to OFF ("LOW" or 0V)
+  delay(1000);                   // Wait one second.
 }  // When we reach the end of the block of code the loop will repeat
