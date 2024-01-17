@@ -33,6 +33,19 @@
  * David Schmidt
  */
 
+/* 
+ * Parts List:
+ * 1. Inventrio HERO XL: A variant of the Arduino MEGA 2560, providing numerous I/O pins 
+ *    for complex projects.
+ * 2. Breadboard: A platform for constructing a temporary prototype electronic circuit 
+ *    and experimenting without the need for soldering.
+ * 3. Jumper Wires: Wires that are used to make connections between the components 
+ *    on the breadboard and the Arduino HERO XL.
+ * 4. LED: A light-emitting diode (any color LED with two leads)
+ * 5. Resistor: A 220 ohm resistor to limit the current through the LED, thereby
+ *    protecting it. 
+ */
+
 /*
  * Arduino language concepts introduced/documented in this lesson.
  * - Arduino language.  Based on C++.  Optimized for use with microcontrollers
