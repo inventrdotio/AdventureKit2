@@ -47,7 +47,7 @@
  */
 
 /*
- * Arduino language concepts introduced/documented in this lesson.
+ * Arduino language concepts introduced in this lesson:
  * - Arduino language.  Based on C++.  Optimized for use with microcontrollers
  *   and providing a simplified programming interface for hardware-specific tasks.
  * - Block Comments (like this one)
@@ -60,6 +60,15 @@
  *   (https://www.arduino.cc/reference/en/language/structure/further-syntax/define/)
  * - const - newer and recommended way to define constants
  *   (https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/const/)
+ * - unsigned char - an 8 bit, positive value large enough to store an ASCII character or
+ *                   a numeric value from 0-255
+ * - uint8_t - another name for "unsigned char".  A better name when the value will be
+ *             used as a number instead of an alphanumeric character.
+ *
+ * Hardware concepts introduced in this lesson:
+ * - Breadboard - Used to easily create circuits without permanent soldering
+ * - Jumper wires - used to create connections between HERO XL and other devices
+ * - LEDs (Light Emitting Diodes)
  */
 
 /*
@@ -114,7 +123,7 @@
  * Constants are often in all capital letters to emphasize that they are constants (though
  * this isn't required).
  */
-const int LIGHT_PIN = 22;  // Create the constant "LIGHT_PIN" defining pin connected to our LED
+const uint8_t LIGHT_PIN = 22;  // Create the constant "LIGHT_PIN" defining pin connected to our LED
 
 // Set up two constants so that we can turn our light "on" or "off".
 const uint8_t ON = HIGH;  // HIGH is defined in Arduino.h to output 5 volts to a pin
