@@ -19,11 +19,17 @@
  */
 
 /*
- * Arduino language concepts introduced in this lesson.
+ * Arduino language concepts introduced in this lesson:
+ * - Variables - a name that points to a storage location where the value can be
+ *               both read AND written.
+ * - Variable types - variables can have different types which define the range
+ *                    of values that can be stored
+ * - Variable scope - WHERE in the code that the variables can be read or written.
+ *                    Variables are only usable when they "in scope" and are unavailable
+ *                    outside of those areas.
+ * - boolean values - Only two values allowed, "true" or "false"
  *
- *  * Variables
- *  * Variable types
- *  * Variable scope
+ * Hardware concepts introduced in this lesson:
  */
 #include "Arduino.h"
 
@@ -37,15 +43,19 @@
  *       D0/D1 (used by USB and Serial)
  *       D14-D19 (used by Serial 1-3)
  *       D2/D3, D18-D21 (used for external interrupts)
- *       D13 (this pin controls the build in LED on the HERO XL board (LED_BUILTIN)),
+ *       D13 (this pin controls the built in LED on the HERO XL board (LED_BUILTIN)),
  *       D2-D13, D44-D46 (used for Pulse Width Modulation (PWM))
  *       D50 (MISO), D51 (MOSI), D52 (SCK), D53 (SS).  (used for SPI communication)
  *       D20 (SDA), D21 (SCL).  (used for I2C communication using the Wire library)
  * Recommended for fewest conflicts:
  *    D22-D49
  */
-const uint8_t LIGHT = 22;         // LED on pin 22
+const uint8_t LIGHT_PIN = 22;     // LED on pin 22
 const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
+
+// Set up two constants so that we can turn our light "on" or "off".
+const uint8_t ON = HIGH;  // HIGH is defined in Arduino.h to output 5 volts to a pin
+const uint8_t OFF = LOW;  // LOW is defined to turn a pin "off" (low voltage)
 
 /*
  * NOTE: Using a pull-up resistor can cause some confusion because the input pin connected
@@ -57,7 +67,7 @@ const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
 const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
 
 void setup() {
-  pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
+  pinMode(LIGHT_PIN, OUTPUT);           // LED representing our light (output)
   pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
 }
 
@@ -70,53 +80,65 @@ void setup() {
  * can hold, and the name is used to refer to the variable in your code.
  *
  * To use the least amount of storage possible, we typically declare variables with
- * the smalledt type that can hold ALL possible values.  uint8_t is defined as an
+ * the smallest type that can hold ALL possible values.  uint8_t is defined as an
  * unsigned (can't be negative) number held in 8 bits.  It can hold values from 0 - 255.
  *
  * Variables have "scope", which refers to the area of the program where a variable is
- * accessible or visible.  There are two primary types of variable scope:
+ * accessible or visible.  There are different types of variable scope:
  *
  * Local scope: A local variable is declared within a function or a block of code
- * (enclosed by {} braces). It is only accessible within that function or block,
- * and it's created when the function is called and destroyed when the function exits.
+ *              (enclosed by {} braces). It is only accessible within that function
+ *              or block, and it's created when the function is called and destroyed
+ *              when the function exits.
+ *
+ * Static local scope: A "static" variable has the same scope as a local variable, but
+ *                     the value is kept when the program leaves the scope instead of
+ *                     being destroyed.  If execution returns to that local scope the
+ *                     previous value can be read.
  *
  * Global scope: A global variable is declared outside any function or block of code,
- * usually at the top of the program. It is accessible from any part of the program,
- * including functions and blocks. Global variables are created when the program starts.
+ *               usually at the top of the program. It is accessible from any part of
+ *               the program, including functions and blocks. Global variables are created
+ *               when the program starts.
  *
  * Since these variables need to maintain their state between each execution of loop()
  * we declare them here as Global variables.
+ *
+ * Variable are named using the same rules as for constant names.  HOWEVER, to make it
+ * easier to tell a variable from a constant we will use all LOWER case for variables in
+ * this course.  So, when you see capital letters you may assume the value may not change
+ * and if in lower case the value *could* be changed.
  */
-bool light_on = false;                     // we start with the light turned off
+
+// Boolean values can be true or false.  The HIGH/LOW constants can also be interpreted
+// as booleans (true or false)
+bool light_is_on = false;                  // is the light on at first?  false
 bool previous_button_state = NOT_PRESSED;  // start out with button NOT pressed
 
 /*
- * In the loop we'll check to see if the button has *just* been pressed or released and
- * when it's pressed we'll toggle the light on/off.
+ * In the loop we will check to see if the button has been *changed* since the last
+ * time we checked and when the button is first pressed we will "toggle" our light,
+ * turning it on if it is off and turning it off if it is on.
  */
 void loop() {
   // Since we only use the button state *inside* loop() we declare it here as a local variable.
   uint8_t button_state = digitalRead(LIGHT_BUTTON);  // read current button state and save it
-  
+
   // first check to see if the button state has changed since last loop()
   if (button_state != previous_button_state) {
     if (button_state == PRESSED) {  // if our NEW state is PRESSED this is a new button press
-      // then toggle our light, turning it of if it's on, and on if it's off.
-      if (light_on) {
-        digitalWrite(LIGHT, LOW);   // Light is on, turn it off
-        light_on = false;           // ... and save it's new state
-      } else {                      // Light must be off
-        digitalWrite(LIGHT, HIGH);  // turn on light
-        light_on = true;            // ... and save it's new state
+      // then toggle our light, turning it off if it's on, and on if it's off.
+      if (light_is_on) {
+        digitalWrite(LIGHT_PIN, OFF);  // Light is on, turn it off
+        light_is_on = false;           // ... and save it's new state
+      } else {                         // Light must be off
+        digitalWrite(LIGHT_PIN, ON);   // turn on light
+        light_is_on = true;            // ... and save it's new state
       }
     }
     // Since button state changed, let's save its current state for next time through loop()
     previous_button_state = button_state;
   }
 
-  // This delay isn't strictly necessary, but if we let the loop() run as quickly as it can
-  // then we will use more power than necessary.  Let's check for a change in the button
-  // state ever 20th of a second (1000 milliseconds / 20 = 50 milliseconds).  That is fast
-  // enough that it will appear instantaneous to our users.
-  delay(50);
+  delay(50);  // short delay to reduce power consumption
 }

@@ -27,11 +27,12 @@
  */
 
 /*
- * Arduino language concepts introduced in this lesson.
- *
- *  - pull-up resistors
- *  - pinMode INPUT_PULLUP parameter
+ * Arduino language concepts introduced in this lesson:
+ *  - INPUT_PULLUP parameter for pinMode() function
  *  - Setting a constant to represent PRESSED
+ *
+ * Hardware concepts introduced in this lesson:
+ *  - pull-up resistors
  */
 #include "Arduino.h"
 
@@ -45,15 +46,19 @@
  *       D0/D1 (used by USB and Serial)
  *       D14-D19 (used by Serial 1-3)
  *       D2/D3, D18-D21 (used for external interrupts)
- *       D13 (this pin controls the build in LED on the HERO XL board (LED_BUILTIN)),
+ *       D13 (this pin controls the built in LED on the HERO XL board (LED_BUILTIN)),
  *       D2-D13, D44-D46 (used for Pulse Width Modulation (PWM))
  *       D50 (MISO), D51 (MOSI), D52 (SCK), D53 (SS).  (used for SPI communication)
  *       D20 (SDA), D21 (SCL).  (used for I2C communication using the Wire library)
  * Recommended for fewest conflicts:
  *    D22-D49
  */
-const uint8_t LIGHT = 22;         // LED on pin 22
+const uint8_t LIGHT_PIN = 22;     // LED on pin 22
 const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
+
+// Set up two constants so that we can turn our light "on" or "off".
+const uint8_t ON = HIGH;  // HIGH is defined in Arduino.h to output 5 volts to a pin
+const uint8_t OFF = LOW;  // LOW is defined to turn a pin "off" (low voltage)
 
 /*
  * NOTE: Using a pull-up resistor can cause some confusion because the input pin connected
@@ -61,19 +66,20 @@ const uint8_t LIGHT_BUTTON = 23;  // Button (light switch) on pin 23
  *       button IS pressed.  We can reduce this confusion a little by defining a
  *       new constant for the state of our button: "PRESSED"
  */
-const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
+const uint8_t PRESSED = LOW;  // Button input pin reads LOW when pressed
 
 void setup() {
-  pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
+  pinMode(LIGHT_PIN, OUTPUT);           // LED representing our light (output)
   pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
 }
 
 void loop() {
   // now the code tests to see if the pin is PRESSED, which makes more sense!
   if (digitalRead(LIGHT_BUTTON) == PRESSED) {
-    digitalWrite(LIGHT, HIGH);
+    digitalWrite(LIGHT_PIN, ON);
   } else {
-    digitalWrite(LIGHT, LOW);
+    digitalWrite(LIGHT_PIN, OFF);
   }
-  delay(50);
+
+  delay(50);  // short delay to reduce power consumption
 }
