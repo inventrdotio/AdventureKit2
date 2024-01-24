@@ -58,6 +58,8 @@
  *   (https://www.arduino.cc/reference/en/language/structure/further-syntax/include/)
  * - #define - defines a constant or creates a short macro
  *   (https://www.arduino.cc/reference/en/language/structure/further-syntax/define/)
+ * - '=' - Assignment operator which evaluates the right side and assigns it to name on the left
+ *   (https://www.arduino.cc/reference/en/language/structure/arithmetic-operators/assignment/)
  * - const - newer and recommended way to define constants
  *   (https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/const/)
  * - unsigned char - an 8 bit, positive value large enough to store an ASCII character or
@@ -112,10 +114,12 @@
  * This also makes our code more understandable.  Which of these commands is easier to
  * understand, "digitalWrite(22, 1)" or "digitalWrite(LIGHT_PIN, ON)"?
  *
- * Names can be used to define "variables" (that can change value as our code executes)
- * or "constants" (values that don't change).  To indicate a value that cannot change
- * we preface the name with "const" to indicate that this is a constant that will not
- * change.
+ * We can assign (using the '=' operator) values to constants (values that cannot change
+ * during program execution) or variables (names that can be assigned new values during
+ * program execution).
+ *
+ * To indicate a value that cannot change we preface the name with "const" to indicate
+ * that this is a constant that will not change.
  *
  * While "#define" is often used for this type of naming it can sometimes have some
  * bad side effects.  Because of this, const is the preferred way to define constants.
