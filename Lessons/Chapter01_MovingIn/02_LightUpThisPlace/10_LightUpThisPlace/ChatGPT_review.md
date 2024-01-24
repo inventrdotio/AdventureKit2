@@ -1,3 +1,11 @@
+# ChatGPT review of this sketch
+
+## Prompt
+Here is an arduino sketch written for a course on arduino programming that lights an external LED.  The course is targeted toward students ages 12+ and contains extra instructional comments.
+
+Please evaluate this sketch to see if there are any errors or whether any instructional material has been left out.
+
+## ChatGPT output
 The Arduino sketch you've provided is well-structured and contains a wealth of instructional comments that are ideal for students in the 12+ age group. It's clear, informative, and effectively explains both the technical and conceptual aspects of programming an Arduino. Here's a detailed evaluation:
 
 ### Code Structure and Comments
