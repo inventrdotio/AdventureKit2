@@ -57,15 +57,22 @@
  * - #include
  *   (https://www.arduino.cc/reference/en/language/structure/further-syntax/include/)
  * - #define - defines a constant or creates a short macro
- *   (https://www.arduino.cc/reference/en/language/structure/further-syntax/define/)
+ *             (https://www.arduino.cc/reference/en/language/structure/further-syntax/define/)
  * - '=' - Assignment operator which evaluates the right side and assigns it to name on the left
- *   (https://www.arduino.cc/reference/en/language/structure/arithmetic-operators/assignment/)
+ *         (https://www.arduino.cc/reference/en/language/structure/arithmetic-operators/assignment/)
  * - const - newer and recommended way to define constants
- *   (https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/const/)
+ *           (https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/const/)
  * - unsigned char - an 8 bit, positive value large enough to store an ASCII character or
  *                   a numeric value from 0-255
  * - uint8_t - another name for "unsigned char".  A better name when the value will be
  *             used as a number instead of an alphanumeric character.
+ * - pinMode() - instruct program how a pin will be used and whether it will be written to
+ *               or read from.
+ *               (https://www.arduino.cc/reference/en/language/functions/digital-io/pinmode/)
+ * - digitalWrite() - write a value to an output pin
+ *                    (https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/)
+ * - delay() - pause execution of the program for a set period of time
+ *             (https://www.arduino.cc/reference/en/language/functions/time/delay/)
  *
  * Hardware concepts introduced in this lesson:
  * - Breadboard - Used to easily create circuits without permanent soldering
