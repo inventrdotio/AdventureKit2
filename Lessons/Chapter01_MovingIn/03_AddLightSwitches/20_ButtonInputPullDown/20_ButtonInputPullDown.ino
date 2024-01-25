@@ -2,20 +2,45 @@
  * Day 0 - AI Apocalypse by inventr.io
  * Learn more at https://inventr.io/PLACEHOLDER
  *
- * A momentary on button, also known as a momentary push button or momentary switch, is
- * a type of switch that closes the electrical connection only when it's being pressed. 
- * When you release the button, the connection opens again.
+ * Well, we obviously cannot have our lights flashing intermittently when we want them
+ * off.  To make sure we always have a stable value on our input pin we use
+ * a pull-down or pull-up resistor.  This sketch will demonstrate using a
+ * pull-down resistor.
  *
- * Button state is read on a digital input pin.  However, when the button is not pressed
- * the input pin has NO connection to either +5V or Ground.  If you read a digital input pin
- * with no connection the pin will randomly read HIGH or LOW.  This is called a floating
- * pin.
+ * Here's how the pull-down resistor works.
  *
- * If we connect our input pin to ground through a pull-down resistor then the pin will
- * read LOW when not pressed, and HIGH when pressed.
+ * Imagine you have a digital input pin on your HERO XL that you want to use to
+ * read the state of a button—whether it's being pressed or not. But there's a
+ * catch: when the button is not pressed, the input pin isn't connected to
+ * anything. It's left "floating." Just like a boat without an anchor, this
+ * floating pin can drift high or low without warning, giving unpredictable
+ * readings.
+ *
+ * This is where a pull-down resistor comes to the rescue. It's like giving that
+ * boat a hefty anchor. We connect one end of the resistor to our input pin and
+ * the other end to ground. Now, when the button isn't pressed, the resistor
+ * "pulls" the pin towards ground (0V), ensuring it reads a steady LOW.
+ *
+ * But when the button is pressed, it makes a connection to +5V, and the pin
+ * reads HIGH, clear as day. The resistor is strong enough to keep the pin steady
+ * when the button isn't pressed, but also gentle enough to step aside when the
+ * button is pressed, allowing the pin to read HIGH.
+ *
+ * This pull-down resistor ensures our input readings are reliable and prevents
+ * the digital pin from floating and giving us random data. It's a simple
+ * solution to keep our inputs in check and our readings accurate.
  *
  * The HERO XL does NOT have a built-in pull-down resistor, so we will use an external
- * 10K resistor as our pull-down resistor.
+ * 10K resistor as our pull-down resistor.  There are a number reasons why we use
+ * a 10K resistor for this purpose.
+ *
+ * 1) 10K is high enough that when the button is not pressed, the voltage read at
+ *    the input pin is very close to 0V and will be reliably read as "LOW".
+ * 2) When the button is pressed, there's a direct connection from 5V to ground
+ *    through the resistor.  The resistor limits the amount of current that "leaks"
+ *    to ground, preventing damage to our microcontroller.
+ * 3) Power consumption.  10K is high enough to limit the amount of "wasted" current
+ *    passing to ground when the button is pressed.
  *
  * Alex Eschenauer
  * David Schmidt
