@@ -2,7 +2,7 @@
  *  that does not affect the code generated.]
  *
  * Day 0 - AI Apocalypse by inventr.io
- * Learn more at https://inventr.io/PLACEHOLDER
+ * Learn more at https://inventr.io/product/adventure-kit-2/
  *
  * While the walls at the old inventr.io site will give us better security,
  * there aren't as many windows here so some of the rooms get pretty dark.
