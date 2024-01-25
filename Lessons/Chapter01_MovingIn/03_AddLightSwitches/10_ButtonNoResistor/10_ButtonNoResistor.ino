@@ -1,6 +1,16 @@
 /*
  * Day 0 - AI Apocalypse by inventr.io
- * Learn more at https://inventr.io/PLACEHOLDER
+ * Learn more at https://inventr.io/product/adventure-kit-2/
+ *
+ * Now that we know how to wire our HERO XL to the lights we need to be able to turn
+ * the lights on and off instead of just letting them blink all the time.
+ *
+ * The LED lights in our new home already have wall buttons that used to send signals
+ * to the AI controlling the building, but we can connect them instead to one of our
+ * HERO XL's and use them to turn the lights on or off.
+ *
+ * Our parts box contains some small, momentary buttons that we can use to simulate
+ * our offices while we create the program we will use to control the lights.
  *
  * A momentary on button, also known as a momentary push button or momentary switch, is
  * a type of switch that closes the electrical connection only when it's being pressed. 
@@ -10,6 +20,9 @@
  * the input pin has NO connection to either +5V or Ground.  If you read a digital input pin
  * with no connection the pin will randomly read HIGH or LOW.  This is called a floating
  * pin.
+ *
+ * Let's wire up our button and show how it works when nothing is connected to the input
+ * pin.  Then we'll discuss various ways to fix floating pins.
  *
  * Alex Eschenauer
  * David Schmidt
