@@ -2,25 +2,35 @@
  * Day 0 - AI Apocalypse by inventr.io
  * Learn more at https://inventr.io/PLACEHOLDER
  *
- * A momentary on button, also known as a momentary push button or momentary switch, is
- * a type of switch that closes the electrical connection only when it's being pressed. 
- * When you release the button, the connection opens again.
+ * Our last design used a pull-down resistor to provide a stable input when
+ * the button isn't pressed.  Now let's switch our design to use a pull-up
+ * resistor and explain the differences.
  *
- * Button state is read on a digital input pin.  However, when the button is not pressed
- * the input pin has NO connection to either +5V or Ground.  If you read a digital input pin
- * with no connection the pin will randomly read HIGH or LOW.  This is called a floating
- * pin.
+ * When we switch from using a pull-down to a pull-up resistor in our circuit, 
+ * we gain several benefits but also encounter a potential source of confusion.
  *
- * We can also connect our input pin through a pull-up resistor to +5V to use as a default
- * value.  Our HERO XL even provides an internal pull-up resistor that does just that, so
- * if we enable the build-in pull-up resistor we no longer need an external resistor connected
- * to our button.
+ * The pull-up resistor is connected between the input pin and +5V. This setup
+ * ensures that our input pin defaults to a HIGH state when the button is not
+ * pressed, providing a stable signal without floating. The pin is "pulled up"
+ * to a known voltage, preventing random fluctuations and making sure it reads
+ * HIGH consistently in the absence of a press.
  *
- * Now, when the button isn't pressed our input pin will read a HIGH value.  We will connect
- * our buttons other side to GND so that when our button is pressed it will show a LOW value.
+ * The benefit of using a pull-up resistor, especially the built-in ones on the
+ * HERO XL, is that it simplifies the circuit. There's no need for an additional
+ * external resistor, saving space and components. Additionally, using the internal
+ * pull-up allows for a neater setup and can reduce issues with wiring and
+ * breadboard contact resistance that might affect the circuit stability.
  *
- * We enable the built-in pull-up resistor by setting our mode in the pinMode() statement
- * to INPUT_PULLUP.
+ * However, this approach inverts the logic of our button press. With a pull-down,
+ * a pressed button results in a HIGH signal. With a pull-up, a pressed button
+ * connects the input pin to ground, resulting in a LOW signal. This logical
+ * inversion might be counterintuitive because we usually associate a button press
+ * with a HIGH signal, not LOW.
+ *
+ * It's essential to account for this inverted logic in our code. We define a 
+ * constant like "PRESSED" to equal LOW. This way, when we check the button state 
+ * in the code, we can use our "PRESSED" constant, which makes the code more 
+ * intuitive and easier to read.
  *
  * Alex Eschenauer
  * David Schmidt
@@ -28,11 +38,12 @@
 
 /*
  * Arduino language concepts introduced in this lesson:
- *  - INPUT_PULLUP parameter for pinMode() function
- *  - Setting a constant to represent PRESSED
+ * - INPUT_PULLUP parameter for pinMode() function
+ * - Setting a constant to represent PRESSED
  *
  * Hardware concepts introduced in this lesson:
- *  - pull-up resistors
+ * - pull-up resistors
+ * - built-in pull-up resistor in our HERO-XL
  */
 #include "Arduino.h"
 

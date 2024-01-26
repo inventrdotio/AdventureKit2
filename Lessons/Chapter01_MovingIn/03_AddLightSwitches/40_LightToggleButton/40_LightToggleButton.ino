@@ -2,17 +2,28 @@
  * Day 0 - AI Apocalypse by inventr.io
  * Learn more at https://inventr.io/PLACEHOLDER
  *
- * A momentary on button, also known as a momentary push button or momentary switch, is
- * a type of switch that closes the electrical connection only when it's being pressed. 
- * When you release the button, the connection opens again.
+ * While our prevous sketches show how we can control the light, we obviously
+ * cannot stand and hold the button down to provide our light.  We need a way to
+ * turn the light on and LEAVE it on until we turn it off.
  *
- * Button state is read on a digital input pin.  However, when the button is not pressed
- * the input pin has NO connection to either +5V or Ground.  If you read a digital input pin
- * with no connection the pin will randomly read HIGH or LOW.  This is called a floating
- * pin.
+ * In our final sketch, we've added an interactive twist to our circuit's behavior.
+ * Now, instead of just turning the LED on when the button is pressed, we're going
+ * to "toggle" the LED's state each time the button is pressed. This means if the
+ * LED is off and the button is pressed, the LED will turn on. If the LED is on and
+ * the button is pressed again, it will turn off.
  *
- * We're using the built-in pull-up resistor in the HERO XL, so our pin connected to the
- * button will read HIGH when button is NOT pressed, and LOW when button is pressed.
+ * This toggle functionality mimics how a traditional light switch works, making our
+ * circuit more intuitive and interactive. It's a simple yet effective way to control
+ * the LED and also serves as a foundational concept for creating more complex
+ * interactions in future projects.
+ *
+ * To achieve this, we use a boolean variable to remember the current state of the
+ * LED. Each time the button is pressed, we check this state: if the LED is on, we
+ * turn it off; if it's off, we turn it on. This state is then updated to reflect
+ * the new status of the LED, ready for the next button press.
+ *
+ * This type of control is not only useful for LEDs but can be extended to control
+ * other devices, making it a versatile pattern for interactive projects.
  *
  * Alex Eschenauer
  * David Schmidt
@@ -94,7 +105,8 @@ void setup() {
  * Static local scope: A "static" variable has the same scope as a local variable, but
  *                     the value is kept when the program leaves the scope instead of
  *                     being destroyed.  If execution returns to that local scope the
- *                     previous value can be read.
+ *                     previous value can be read.  We don't use a static local in this
+ *                     sketch.
  *
  * Global scope: A global variable is declared outside any function or block of code,
  *               usually at the top of the program. It is accessible from any part of
