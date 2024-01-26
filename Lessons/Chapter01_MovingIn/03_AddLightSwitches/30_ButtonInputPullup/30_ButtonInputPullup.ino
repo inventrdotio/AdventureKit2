@@ -1,6 +1,6 @@
 /*
  * Day 0 - AI Apocalypse by inventr.io
- * Learn more at https://inventr.io/PLACEHOLDER
+ * Learn more at https://inventr.io/product/adventure-kit-2/
  *
  * Our last design used a pull-down resistor to provide a stable input when
  * the button isn't pressed.  Now let's switch our design to use a pull-up

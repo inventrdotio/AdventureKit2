@@ -1,6 +1,6 @@
 /*
  * Day 0 - AI Apocalypse by inventr.io
- * Learn more at https://inventr.io/PLACEHOLDER
+ * Learn more at https://inventr.io/product/adventure-kit-2/
  *
  * Well, we obviously cannot have our lights flashing intermittently when we want them
  * off.  To make sure we always have a stable value on our input pin we use

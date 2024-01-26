@@ -1,6 +1,6 @@
 /*
  * Day 0 - AI Apocalypse by inventr.io
- * Learn more at https://inventr.io/PLACEHOLDER
+ * Learn more at https://inventr.io/product/adventure-kit-2/
  *
  * While our prevous sketches show how we can control the light, we obviously
  * cannot stand and hold the button down to provide our light.  We need a way to
