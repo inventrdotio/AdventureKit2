@@ -54,6 +54,7 @@
  * - Serial Plotter - Can be used to plot values displayed on Serial Console
  * - #define for conditional compilation
  * - #if, #elif, #else, #end - Choosing what code to compile using #define
+ * - Placing quotation marks inside strings.
  *
  * Hardware concepts introduced in this lesson:
  */
@@ -125,11 +126,16 @@ bool previous_button_state = NOT_PRESSED;  // start out with button NOT pressed
  * use when we build.  Simply change the #define below to set which version
  * of our prints will be used.
  */
-#define WHICH_PRINT 3  // Set to 1, 2 or 3 then build/upload the sketch again
+#define WHICH_PRINT 1  // Set to 1, 2 or 3 then build/upload the sketch again
 
 void loop() {
   int current_charging_rate = analogRead(CHARGING_RATE);  // Read "charging rate" from our photoresistor (0-1023)
 
+  /*
+   * Output the numbers we wish to plot using the Serial Plotter.
+   * The first two numbers are just to show the 0% and 100% charged points
+   * so the plotter won't continuously change the scale.
+   */
 #if WHICH_PRINT == 1
   // Print something like "0, 1023, 432" on each line
   Serial.print(0);
@@ -138,14 +144,20 @@ void loop() {
   Serial.print(", ");
   Serial.println(current_charging_rate);  // .println() will add a "newline" on the end
 #elif WHICH_PRINT == 2
-  // Print something like "0, 100, 43.2" on each line
+  // Print something like "0, 100, 43" on each line
   Serial.print(0);
   Serial.print(", ");
   Serial.print(100);
   Serial.print(", ");
   Serial.println(map(current_charging_rate, 0, 1023, 0, 100));
 #else
-  // Print something like "0%:0, 100%:100, ChargeRate:43.2"
+  /*
+   * Create a plot label by placing it immediately before its value and separating
+   * the label from the value with a ':'. There can be no spaces next to the ':' or
+   * between words in the label (use '_' to separate words).
+   *
+   * This gives us a line like "0%:0, 100%:100, Charge_Rate:43"
+   */
   Serial.print("0%:");  // Label for  0% charge
   Serial.print(0);
   Serial.print(", 100%:");  // Label for  100% charge

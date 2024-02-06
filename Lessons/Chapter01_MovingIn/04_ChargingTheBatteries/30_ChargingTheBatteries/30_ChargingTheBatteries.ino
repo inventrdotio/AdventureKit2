@@ -5,20 +5,39 @@
  * Charging the Batteries
  *
  * Now that we have the charging level simulated it's time to start modeling
- * how our batteries will charge.  This is actually somewhat complex.
+ * how our batteries will charge. This is actually somewhat complex.
  *
  * Here are some of our concerns.
- * 1) Battery life can be reduced if charged to 100% or fully discharged.  We
+ * 1) Battery life can be reduced if charged to 100% or fully discharged. We
  *    have no idea when our civilization will recover enough to produce new
- *    batteries so let's set a lower charge level, and reduce use when the
- *    level gets close (but not at) zero.
- * 2) Normal daily charging will take hours, but as we develop our code with
- *    this simulation we will "speed up" the charging so we don't take hours
- *    for each test.
+ *    batteries so let's set a lower maximum charge level, and reduce our battery
+ *    use when the level gets close (but not at) zero.
+ * 2) In our previous sketch, did you notice that the charging didn't stop when
+ *    the battery charge reached 100%? That doesn't make sense! So, let's stop
+ *    charging the batteries when they reach our desired maximum charge.
+ * 3) We wouldn't want to be frequently switching the charging on/off, so let's
+ *    only start charging when the charge level has dropped a few percentage points.
+ * 4) When our light is turned on it will be using power, and therefore reducing
+ *    the charge level. So let's subtract battery charge when our light is turned on.
+ * 5) When our battery hits our lower limit we should turn out our light if it's
+ *    on, and not allow it to be turned on until the battery has charged a bit.
  *
  * To meet these concerns we will set up a series of constants that can be used
  * to set the parameters for our simulation and (using those parameters) set
- * up the simulation to run within our desired time frame.
+ * up the simulation to run using those parameters.
+ *
+ * Now we have a good simulation.  The charge level stays within our limits and
+ * stops charging once the charge level reaches our desired maximum.  If you turn
+ * the light on you will see the charge level begin to drop a few percentage points
+ * and then the charging resumes.
+ *
+ * Lastly, if we cover the photoresistor so that the charge level is less than what
+ * our light uses the light is turned off when the charge level drops to our minimum
+ * value.
+ *
+ * Simulation complete!  It looks like we have a good charging/discharging system
+ * so let's take that HERO XL and get it wired up to our charging system so we can
+ * have lights after dark!
  *
  * Alex Eschenauer
  * David Schmidt
@@ -26,13 +45,10 @@
 
 /*
  * Arduino language concepts introduced in this lesson.
+ * - "-=" operator - Subtract a value from a variable.  "x -= 1" is the same as
+ *   "x = x - 1"
  *
- * - Analog input pins
- * - Serial console
- * - Serial plotter
- * - Floating point numbers/variables
- * - map()
- * - += (compound addition)
+ * Hardware concepts introduced in this lesson:
  */
 #include "Arduino.h"
 
@@ -156,13 +172,13 @@ void loop() {
   // during the "day" (though slower) and decrease when the charge rate drops (like at
   // night.)
   if (light_on) {
-    battery_charge_percentage = battery_charge_percentage - (CHARGE_PER_LIGHT_UNIT * AVERAGE_CHARGE_LEVEL * .8);
+    battery_charge_percentage -= CHARGE_PER_LIGHT_UNIT * AVERAGE_CHARGE_LEVEL * .8;
   }
 
   // If our light is on and our charge reaches our low battery limit then
   // turn out the light.
   if (light_on && battery_charge_percentage < LOW_BATTERY_LIMIT) {
-    digitalWrite(LIGHT, OFF);  // Light is on, turn it off
+    digitalWrite(LIGHT_PIN, OFF);  // Light is on, turn it off
     light_on = false;          // ... and save it's new state
   }
 
@@ -182,24 +198,19 @@ void loop() {
   }
 
   // Output the numbers we wish to plot using the Serial Plotter.
-  // The first two numbers are just to show the 0% and 100% charged points
-  // so the plotter won't continuously change the scale.
-  // Plot labels must preceed their variable, be enclosed in quotes, end with a colon, contain no spaces
-  Serial.print("0%:");  // Label for  0% charge
-  Serial.print(0);      // Show line in plotter for 0% charge
-  Serial.print(", ");
-  Serial.print("100%:");  // Label for  100% charge
-  Serial.print(100);      // Show line in plotter for 100% charge
-  Serial.print(", ");
-  Serial.print("%-charged:");               // Label for battery_charge_percentage
-  Serial.print(battery_charge_percentage);  // Plot battery_charge_percentage variable
-  Serial.print(", ");
-  Serial.print("ChargeRate:");                                 // Label for battery_charge_percentage
-  Serial.println(map(current_charging_rate, 0, 100, 0, 100));  // Show charge rate in percent & set y-axis scale
+  Serial.print("0%:");                                         // Label for 0% charge level
+  Serial.print(0);                                             // plotter value for 0% charge
+  Serial.print(", 100%:");                                     // Label for 100% charge level
+  Serial.print(100);                                           // plotter value for 100% charge
+  Serial.print(", %_charged:");                                // Label for battery_charge_percentage
+  Serial.print(battery_charge_percentage);                     // plotter value
+  Serial.print(", Charge_Rate:");                              // Label for battery_charge_percentage
+  Serial.println(map(current_charging_rate, 0, 1023, 0, 100));  // plotter value
 
-  // =========== Second part of loop is our prior button / LED control
+  // ============================================================================
+  // The remainder of the sketch is the same light control with the exception of
+  // the calculated delay to help us get our desired time to full charge.
 
-  // Since we only use the button state *inside* loop() we declare it here as a local variable.
   uint8_t button_state = digitalRead(LIGHT_BUTTON);  // read current button state and save it
 
   // first check to see if the button state has changed since last loop()

@@ -41,6 +41,8 @@
 /*
  * Arduino language concepts introduced in this lesson:
  * - float data type - Floating point numbers (numbers with decimal points)
+ * - "+=" operator - Add a value to a variable.  "x += 1" is the same as
+ *   "x = x + 1"
  *
  * Hardware concepts introduced in this lesson:
  */
@@ -80,7 +82,7 @@ const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
 const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
 
 // Here are some constants used to determine how much to add to our simulated battery every
-// time through our loop().  Many are also defined as floats to force the entire espression
+// time through our loop().  Many are also defined as floats to force the entire expression
 // to use floating point math.
 const uint8_t SECONDS_TO_FULL = 30;    // For our simulation, fully charge battery in this many seconds
 const uint8_t LOOPS_PER_SECOND = 20;   // Run this many loops per second, quick enough for light switch
@@ -126,21 +128,24 @@ void setup() {
  * numbers (https://www.arduino.cc/reference/en/language/variables/data-types/float/)
  * and we'll use them in these sketches to track our battery charging.
  */
-float battery_charge_percentage = 0;  // LOW_BATTERY_LIMIT;  // Battery level in percent.  Starts out discharged.
+float battery_charge_percentage = 0;  // Battery level in percent.  Starts out discharged.
 
 bool light_on = false;                     // we start with the light turned off
 bool previous_button_state = NOT_PRESSED;  // start out with button NOT pressed
 
 void loop() {
-  int current_charging_rate = analogRead(CHARGING_RATE);  // Read "charging rate" from our photoresistor (0-1023)
+  // Read "charging rate" from our photoresistor (0-1023)
+  int current_charging_rate = analogRead(CHARGING_RATE);
 
   // Using our constant from above, multiply our reading from the photoresistor by
   // that constant to see how much to add this loop()
   float new_charge = current_charging_rate * CHARGE_PER_LIGHT_UNIT;
 
-  // Now add that bit of charge to our battery level!
+  // Now add that bit of charge to our battery level using by using the "+=" operator!
   battery_charge_percentage += new_charge;
 
+  // Send our values (plus low/high boundaries) to the Serial Console for the Serial
+  // Plotter to use.
   Serial.print("0%:");  // Label for  0% charge
   Serial.print(0);
   Serial.print(", 100%:");  // Label for  100% charge
@@ -149,6 +154,10 @@ void loop() {
   Serial.print(battery_charge_percentage);
   Serial.print(", Charge_Rate:");  // Label for battery_charge_percentage
   Serial.println(map(current_charging_rate, 0, 1023, 0, 100));
+
+  // ============================================================================
+  // The remainder of the sketch is the same light control with the exception of
+  // the calculated delay to help us get our desired time to full charge.
 
   uint8_t button_state = digitalRead(LIGHT_BUTTON);  // read current button state and save it
 
@@ -164,9 +173,11 @@ void loop() {
         light_on = true;               // ... and save it's new state
       }
     }
+
     // Since button state changed, let's save its current state for next time through loop()
     previous_button_state = button_state;
   }
 
-  delay(50);
+  // Set delay time to get our desired number of loop() runs per second.
+  delay(1000 / LOOPS_PER_SECOND);
 }
