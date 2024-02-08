@@ -85,7 +85,7 @@ const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT press
 // time through our loop().  Many are also defined as floats to force the entire espression
 // to use floating point math.
 
-// Many battery type can be damaged over time if always charged to 100% or fully discharged.  Thus,
+// Many battery types can be damaged over time if always charged to 100% or fully discharged.  Thus,
 // in normal use we'll only charge up to the HIGH_BATTERY_LIMIT and turn off our batteries when
 // LOW_BATTERY_LIMIT is reached.
 const float LOW_BATTERY_LIMIT = 10;   // Turn off power use when battery charge drops below this value
