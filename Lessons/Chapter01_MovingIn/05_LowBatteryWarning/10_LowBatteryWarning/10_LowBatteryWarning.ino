@@ -107,7 +107,7 @@ const float CHARGE_PER_LIGHT_UNIT = PERCENTAGE_PER_LOOP / AVERAGE_CHARGE_LEVEL;
  * progresses simply increment this number, rebuild and upload to see the next
  * evolution in our code.
  */
-#define SKETCH_VERSION 3  // Current version of code to build
+#define SKETCH_VERSION 1  // Current version of code to build
 
 void setup() {
   // Intialize Serial class, used to communicate with the Arduino IDE Serial Monitor
