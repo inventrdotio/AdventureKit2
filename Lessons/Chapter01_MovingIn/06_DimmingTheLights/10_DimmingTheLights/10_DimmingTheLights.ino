@@ -1,26 +1,130 @@
 /*
  * Day 0 - AI Apocalypse by inventr.io
- * Learn more at https://inventr.io/PLACEHOLDER
+ * Learn more at https://inventr.io/product/adventure-kit-2/
  *
- * Building a battery charging controller.
+ * Dimming the lights
  *
- * Batteries are getting charged and we get a warning when they're close to being
- * empty.  But that is happening faster than we prefer.  Perhaps we're using too much
- * power?  The lights are quite bright, probably brighter than they need to be.
+ * It looks like our lights are using too much current and our battery charge level
+ * is getting drained too quickly.  There are lot of things we plan that will need
+ * power so we need to reduce how much our lights are using.
  *
- * Let's dim those lights and see if we can reduce our power needs so that our batteries
- * don't run out of charge before we're ready to quit for the night.
+ * The lights are brighter than we really need, and in fact could draw the attention
+ * of the AI hunting us.  Let's modify our sketch so that we can dim the lights to
+ * a lower level, which will draw less attention AND use less power.
  *
+ * First version
+ * =============
+ * Our photoresistor shows how a variable resistance can be used to generate a number
+ * from 0-1023 on one of our analog pins.  But of course, using a photoresistor to
+ * dim our lights wouldn't work very well.
+ *
+ * It looks like our stash of parts contains just what we need.  A potentiometer is
+ * resistor where the value can be set by turning a dial.
+ *
+ * Let's start by wiring in a potentiometer and seeing if we can read a value we can
+ * use.  We'll convert the value to a percentage and print it to the Serial Console
+ * and display it using the Serial Plotter.
+ *
+ * With the SKETCH_VERSION to 1, build and upload so we can try out our new code. Open
+ * the Serial Console to see the dimmer percentage, and open the Serial Plotter as you
+ * turn the dial to see our desired light setting.
+ * 
+ * Second version
+ * ==============
+ * That's odd.  When I turn our dimmer up (clockwise), the percentage goes down, and
+ * vice-versa.
+ *
+ * I see the problem, the potentiometer we found has it's maximum resistance when turned
+ * counter-clockwise, and least resistance when turned clockwise.
+ *
+ * I think there's an easy fix for this though.  Remember the map() function that we
+ * use to convert the analog input (0-1023) to a different range (0-100)?  It turns
+ * out that if we reverse the values for our target range, the map() function will
+ * increase it's output as the input decreases, and vice-versa.  This gives us 100
+ * when our input is 0, and 0 when the input is 1023.
+ *
+ * Change SKETCH_VERSION to 2, rebuild and upload. Now we see that our dimmer now
+ * increases the light percentage as we rotate the dimmer clockwise.
+ *
+ * Third Version
+ * =============
+ * Now that we can read our dimmer setting, let's change the intensity of the lights
+ * to match.
+ *
+ * While the HERO XL has analog input pins, it does not have analog *output* pins.  The
+ * pins can only output 0V or 5V.  So, how can we dim our LED?  One way is to change
+ * how much time we send the 5V.  If we turn the output pin on and off very quickly then
+ * the LED will dim between pulses of 5V.  This technique is called Pulse Width Modulation
+ * (PWM) and our HERO XL supports this on pins D2-D13 and D44-D46.
+ *
+ * So, start by moving the lead plugged into pin 22 to pin 44 so that we can use PWM
+ * to let us dim our simulated office light (the LED).  Now we can set LIGHT_PIN to
+ * 44 to match.
+ *
+ * Our last step will use the analogWrite() function.  Now, didn't I just tell you that
+ * the HERO XL doesn't have analog output pins?  Yes, but since PWM *simulates* an
+ * analog output that name was chosen.  The analogWrite() function takes a value from
+ * 0 to 255.  We currently have the value we read from the dimmer (0-1023) and the
+ * percentage we computed (0-100).  But we can use the map() function again to convert
+ * the dimmer values to our desired range.  Again, we will reverse the range so that
+ * our light will get brighter as we turn the dial clockwise.
+ *
+ * Change SKETCH_VERSION to 3, rebuild and upload.  Now when you turn on the LED
+ * and turn the dimmer dial we see that the LED gets brighter or dimmer to match.
+ *
+ * Fourth Version
+ * ==============
+ * (change amount of charge that the light uses based on light percentage)
+ * Our simulation is almost complete, but we have one more change to make.  Did you
+ * notice that even if you dim the light, the battery is still getting discharged
+ * at the same rate?
+ *
+ * In our simulation we need to adjust the amount of charge used by our LED based
+ * on our dimmer setting so that the battery charge level goes down slower when
+ * the LED is dimmed.
+ *
+ * We do this by simply taking the value we were subtracting from the battery and
+ * multiplying it by the dimmer percentage (making sure to convert the percentage)
+ * to a fractional value from 0 to 1.0 instead of 0 to 100.
+ *
+ * Now change SKETCH_VERSION to 4, rebuild and upload.  Now when the LED is on the
+ * speed the battery is discharged is based on how bright we have our lights.  Just
+ * what we need!
+ *
+ * Next Steps
+ * ==========
+ * Here's one other change we could make if you have extra time.  What is we
+ * *automatically* dimmed our lights as we neared our battery low limit.  This
+ * could be done by setting a maximum intensity that is 100% above our warning
+ * level and then be reduced as we approach our low battery limit.
+ *
+ * Remember that if the user has the light dimmed LOWER than this max limit the
+ * light should use the actual setting, but if the setting is brighter than the
+ * lowered maximum then it should be set to the maximum.
+ *
+ * Alex Eschenauer
  * David Schmidt
  */
 
 /*
  * Arduino language concepts introduced in this lesson.
+ * - Reverse map() - Map can decrease output as input range increases.
  *
- * - Potentiometer
- * - Pulse Width Modulation (PWM)
+ * Hardware concepts introduced in this lesson:
+ * - potentiometer - a variable resistor that changes value as a dial is turned
+ * - Pulse Width Modulation (PWM) - Turns voltage on/off very quickly to lower
+ *            amount of current 
  */
 #include "Arduino.h"
+
+/*
+ * As this sketch evolves we'll make changes to improve the way it works.  Rather
+ * than having multiple sketches, we use conditional compilation to only include
+ * the code for the current version.  We begin with version 1.  As the lesson
+ * progresses simply increment this number, rebuild and upload to see the next
+ * evolution in our code.
+ */
+#define SKETCH_VERSION 4  // Current version of code to build
 
 /* Choosing what pin to use.
  * This project only needs digital pins.  So, on the Hero XL we *could* use any digital or analog pin
@@ -39,21 +143,24 @@
  * Recommended for fewest conflicts:
  *    D22-D43, D47-D49, A8-A15
  */
-const uint8_t LIGHT = 22;          // LED on pin 22
+
+#if SKETCH_VERSION <= 2        // If version is 1 or 2
+const uint8_t LIGHT_PIN = 22;  // LED on pin 22
+#else
+const uint8_t LIGHT_PIN = 44;  // LED now on pin 44 which supports PWM
+#endif
 const uint8_t LIGHT_BUTTON = 23;   // Button (light switch) on pin 23
 const uint8_t ALARM_PIN = 24;      // Active buzzer simulating our alarm speakers
 const uint8_t CHARGING_RATE = A8;  // Photoresistor input simulating battery charge rate
 const uint8_t LIGHT_DIMMER = A9;   // Our dimmer used to dim our lights.
 
-/*
- * NOTE: While HIGH/LOW now make more sense when using a pull-down resistor, it still
- *       makes even MORE clear using PRESSED / NOT_PRESSED.  However, now we set
- *       PRESSED equal to HIGH.  We can also use ON / OFF for our lights.
- */
+// Set up two constants so that we can turn our light "on" or "off".
+const uint8_t ON = HIGH;  // HIGH is defined in Arduino.h to output 5 volts to a pin
+const uint8_t OFF = LOW;  // LOW is defined to turn a pin "off" (low voltage)
+
+// Set constants to read better with our use of the internal pull-up resistor.
 const uint8_t PRESSED = LOW;       // Button input pin reads LOW when pressed
 const uint8_t NOT_PRESSED = HIGH;  // Button input pin reads HIGH when NOT pressed
-const uint8_t ON = HIGH;           // Lights are ON when pin is HIGH
-const uint8_t OFF = LOW;           // Lights are OFF when pin is LOW
 
 // Here are some constants used to determine how much to add to our simulated battery every
 // time through our loop().  Many are also defined as floats to force the entire espression
@@ -70,12 +177,12 @@ const float HIGH_BATTERY_LIMIT = 90;  // Stop charging battery here to minimize 
 // below this level.
 const float RESUME_CHARGING_AT = HIGH_BATTERY_LIMIT - 5.0;
 
+const uint8_t SECONDS_TO_FULL = 30;        // For our simulation, fully charge battery in this many seconds
+const uint8_t LOOPS_PER_SECOND = 20;       // Run this many loops per second, quick enough for light switch
+const int16_t AVERAGE_CHARGE_LEVEL = 420;  // Photoresistor reads approximately this value for room light.
+
 // Warn users when current charge level approaches lower limit
 const float LOW_BATTERY_WARNING = LOW_BATTERY_LIMIT + 5.0;
-
-const uint8_t SECONDS_TO_FULL = 15;    // For our simulation, fully charge battery in this many seconds
-const uint8_t LOOPS_PER_SECOND = 20;   // Run this many loops per second, quick enough for light switch
-const int AVERAGE_CHARGE_LEVEL = 530;  // Photoresistor reads approximately this value for room light.
 
 // Now, using those constants we can calculate (at average room light) how much to charge our battery
 // every time through our loop().  We could do this in one long calculation, but to show you how it was
@@ -102,11 +209,11 @@ void setup() {
   while (!Serial) {
     ;  // wait for serial port to connect.
   }
-  pinMode(LIGHT, OUTPUT);               // LED representing our light (output)
+  pinMode(LIGHT_PIN, OUTPUT);           // LED representing our light (output)
   pinMode(LIGHT_BUTTON, INPUT_PULLUP);  // Button controlling light (input with pull-up resistor)
   pinMode(CHARGING_RATE, INPUT);        // Photoresistor analog input
   pinMode(ALARM_PIN, OUTPUT);           // Set Alarm pin to OUTPUT
-  pinMode(LIGHT_DIMMER, INPUT);
+  pinMode(LIGHT_DIMMER, INPUT);         // Set potentiometer pin as INPUT
 }
 
 /* Global Variables
@@ -134,22 +241,34 @@ bool charging = true;
 float previous_charge_percentage = battery_charge_percentage;
 
 // How long to delay while beeping the buzzer (in milliseconds).
-const int BUZZER_DELAY = 300;  // Delay this much while beeping the buzzer
+const int16_t BUZZER_DELAY = 300;  // Delay this much while beeping the buzzer
 
-unsigned long buzzer_delay_start = 0;  // when did our last buzzer state change
+uint8_t beep_count = 0;  // store number of beeps left to sound.
 
-const int TONES[] = { 880, 698, 587 };
+uint32_t buzzer_delay_start = 0;  // when did our last buzzer state change
+
+// For our tune we'll use an array of integer values.  For more information about
+// arrays refer to https://www.arduino.cc/reference/en/language/variables/data-types/array/
+const int16_t TONES[] = { 880, 698, 587 };
 bool playing_tones = false;
-int current_tone;
+int16_t current_tone;
 
 void loop() {
   /*
    * We can do more than one thing inside our loop() code.  Since the photoresistor is new
    * let's handle that first, but then we can still handle switching our light on/off.
    */
-  int current_charging_rate = analogRead(CHARGING_RATE);  // Read "charging rate" from our photoresistor (0-1023)
-
-  int dimmer_setting = map(analogRead(LIGHT_DIMMER), 0, 1023, 100, 0);  // Map dimmer to 0-100
+  uint16_t current_charging_rate = analogRead(CHARGING_RATE);  // Read "charging rate" from our photoresistor (0-1023)
+  uint16_t dimmer_setting = analogRead(LIGHT_DIMMER);          // read analog dimmer setting (0-1023)
+  // Read our dimmer potentiometer and map it to a percentage.
+#if SKETCH_VERSION == 1
+  uint8_t dimmer_percentage = map(dimmer_setting, 0, 1023, 0, 100);  // Map dimmer to 0-100
+#else
+  // NOTE: The map command can REVERSE the direction of the output.  In this case
+  //       we will map 0 to 100, and 1023 to 0 so that turning the potentiometer
+  //       clockwise will increase the percentage.
+  uint8_t dimmer_percentage = map(dimmer_setting, 0, 1023, 100, 0);  // Map dimmer to 100-0
+#endif
 
   // Using our constant from above, multiply our reading from the photoresistor by
   // that constant to see how much to add this loop()
@@ -165,7 +284,15 @@ void loop() {
   // during the "day" (though slower) and decrease when the charge rate drops (like at
   // night.)
   if (light_on) {
-    battery_charge_percentage = battery_charge_percentage - (CHARGE_PER_LIGHT_UNIT * AVERAGE_CHARGE_LEVEL * .8);
+    float led_power_draw = CHARGE_PER_LIGHT_UNIT * AVERAGE_CHARGE_LEVEL;
+#if SKETCH_VERSION == 4
+    // reduce our power draw when our light is dimmed.
+    // NOTE: Use 100.0 to force the result to be a floating point number.  Otherwise
+    //       the calculation would be done as integers, and if percentage were less
+    //       than 100% the result would always be 0.  (99 / 100 is 0 using integer math)
+    led_power_draw *= dimmer_percentage / 100.0;
+#endif
+    battery_charge_percentage -= led_power_draw;
   }
 
   // Sound warning when battery level drops below warning
@@ -175,15 +302,12 @@ void loop() {
   }
 
   if (playing_tones) {
-    int current_millis = millis();  // Get current millis() count
+    uint32_t current_millis = millis();  // Get current millis() count
     if (current_millis - buzzer_delay_start > BUZZER_DELAY) {
       if (current_tone < sizeof(TONES) / sizeof(int)) {
         tone(ALARM_PIN, TONES[current_tone++]);
-        // Serial.print("play tone ");
-        // Serial.println(current_tone);
         buzzer_delay_start = current_millis;  // Save start time
       } else {
-        // Serial.println("stop playing");
         noTone(ALARM_PIN);
         playing_tones = false;
       }
@@ -193,8 +317,8 @@ void loop() {
   // If our light is on and our charge reaches our low battery limit then
   // turn out the light.
   if (light_on && battery_charge_percentage < LOW_BATTERY_LIMIT) {
-    digitalWrite(LIGHT, OFF);  // Light is on, turn it off
-    light_on = false;          // ... and save it's new state
+    digitalWrite(LIGHT_PIN, OFF);  // Light is on, turn it off
+    light_on = false;              // ... and save it's new state
   }
 
   // When battery reaches the high battery limit we turn off charging.  We do not
@@ -208,27 +332,20 @@ void loop() {
   // If we've reached our high battery limit then turn off charging.  It will
   // remain off until our battery charge drops below RESUME_CHARGING_AT.
   if (battery_charge_percentage > HIGH_BATTERY_LIMIT) {
-    // battery_charge_percentage = HIGH_BATTERY_LIMIT;
     charging = false;
   }
 
+  // Output the numbers we wish to plot using the Serial Plotter.
+  Serial.print("%_charged:");                                 // Label for battery_charge_percentage
+  Serial.print(battery_charge_percentage);                    // value to plot
+  Serial.print(", Charge_Rate:");                             // Label for battery_charge_percentage
+  Serial.print(map(current_charging_rate, 0, 1023, 0, 100));  // value to plot
+  Serial.print(", Dimmer_%:");                                // Label for dimmer %
+  Serial.print(dimmer_percentage);                            // value to plot
+  Serial.println(", 0%:0, 100%:100");                         // Label for 0% charge level
+
   // Save current charge level for next tinme through loop()
   previous_charge_percentage = battery_charge_percentage;
-
-  // Output the numbers we wish to plot using the Serial Plotter.  The first two numbers
-  // are just to show the 0% and 100% charged points so the plotter won't continuously
-  // change the scale.
-  Serial.print(0);  // show line in plotter for 0% charge
-  Serial.print(", ");
-  Serial.print(100);  // show line in plotter for 100% charge
-  Serial.print(", ");
-  Serial.print(battery_charge_percentage);  // show current battery charge in percent
-  Serial.print(", ");
-  Serial.print(map(current_charging_rate, 0, 1023, 0, 100));  // show charge rate, in percent
-  Serial.print(", ");
-  Serial.println(dimmer_setting);
-
-  // =========== Second part of loop is our prior button / LED control
 
   // Since we only use the button state *inside* loop() we declare it here as a local variable.
   uint8_t button_state = digitalRead(LIGHT_BUTTON);  // read current button state and save it
@@ -236,18 +353,39 @@ void loop() {
   // first check to see if the button state has changed since last loop()
   if (button_state != previous_button_state) {
     if (button_state == PRESSED) {  // if our NEW state is PRESSED this is a new button press
-      // then toggle our light, turning it of if it's on, and on if it's off.
+#if SKETCH_VERSION <= 2
+      // then toggle our light, turning it off if it's on, and on if it's off.
       if (light_on) {
-        digitalWrite(LIGHT, LOW);   // Light is on, turn it off
-        light_on = false;           // ... and save it's new state
-      } else {                      // Light must be off
-        digitalWrite(LIGHT, HIGH);  // turn on light
-        light_on = true;            // ... and save it's new state
+        digitalWrite(LIGHT_PIN, OFF);  // Light is on, turn it off
+        light_on = false;              // ... and save it's new state
+      } else {                         // Light must be off
+        digitalWrite(LIGHT_PIN, ON);   // turn on light
+        light_on = true;               // ... and save it's new state
       }
+#else
+      // then toggle our light.  Turn it off if it's on.  Set dimmer value if it's on
+      if (light_on) {
+        analogWrite(LIGHT_PIN, 0);  // Light is on, turn it off
+        light_on = false;   // ... and save it's new state
+      } else {          // Light is off
+        light_on = true;  // ... so set state for light.  Dimmer value is set below
+      }
+#endif
     }
     // Since button state changed, let's save its current state for next time through loop()
     previous_button_state = button_state;
   }
+
+#if SKETCH_VERSION > 2
+  // The dimmer value can change any time, so we need to set the light intensity
+  // outside of the code that turns the light on/off, since that code is only
+  // executed when the button state changes.
+  if (light_on) {
+    // Set light intensity based on current dimmer settting, mapping
+    // 0-1023 to 255-0.
+    analogWrite(LIGHT_PIN, map(dimmer_setting, 0, 1023, 255, 0));
+  }
+#endif
 
   // Set delay time to get our desired number of loop() runs per second.
   delay(1000 / LOOPS_PER_SECOND);
