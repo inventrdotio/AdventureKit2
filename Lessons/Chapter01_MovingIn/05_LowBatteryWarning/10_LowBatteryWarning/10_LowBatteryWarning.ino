@@ -169,6 +169,15 @@
  */
 #include "Arduino.h"
 
+/*
+ * As this sketch evolves we'll make changes to improve the way it works.  Rather
+ * than having multiple sketches, we use conditional compilation to only include
+ * the code for the current version.  We begin with version 1.  As the lesson
+ * progresses simply increment this number, rebuild and upload to see the next
+ * evolution in our code.
+ */
+#define SKETCH_VERSION 1  // Current version of code to build
+
 /* Choosing what pin to use.
  * This project only needs digital pins.  So, on the Hero XL we *could* use any digital or analog pin
  * (D0-D53, A0-A15).  However, some pins support specialized functions and in later lessons we will be
@@ -240,15 +249,6 @@ const float PERCENTAGE_PER_LOOP = PERCENTAGE_PER_SECOND / LOOPS_PER_SECOND;
 // full charge in SECONDS_TO_FULL seconds.
 const float CHARGE_PER_LIGHT_UNIT = PERCENTAGE_PER_LOOP / AVERAGE_CHARGE_LEVEL;
 
-/*
- * As this sketch evolves we'll make changes to improve the way it works.  Rather
- * than having multiple sketches, we use conditional compilation to only include
- * the code for the current version.  We begin with version 1.  As the lesson
- * progresses simply increment this number, rebuild and upload to see the next
- * evolution in our code.
- */
-#define SKETCH_VERSION 4  // Current version of code to build
-
 void setup() {
   // Intialize Serial class, used to communicate with the Arduino IDE Serial Monitor
   Serial.begin(9600);  // Initialize Serial, set speed to 9600 bits/second (baud)
@@ -311,7 +311,7 @@ loop() {
    * We can do more than one thing inside our loop() code.  Since the photoresistor is new
    * let's handle that first, but then we can still handle switching our light on/off.
    */
-  int current_charging_rate = analogRead(CHARGING_RATE);  // Read "charging rate" from our photoresistor (0-1023)
+  uint16_t current_charging_rate = analogRead(CHARGING_RATE);  // Read "charging rate" from our photoresistor (0-1023)
 
   // Using our constant from above, multiply our reading from the photoresistor by
   // that constant to see how much to add this loop()
