@@ -1,6 +1,37 @@
 /*
  * Day 0 - AI Apocalypse by inventr.io
- * Learn more at https://inventr.io/PLACEHOLDER
+ * Learn more at https://inventr.io/product/adventure-kit-2/
+ *
+ * Motion sensor lights
+ *
+ * Second Version
+ * ==============
+ * We can hope that turning on the flood lights will frighten away anything
+ * that approaches, I'd really like to know when this happens, even if I'm
+ * in the building and can't see the lights.
+ *
+ * Let's use the Arduino IDE serial console to print a message whenever motion
+ * is detected.  The Arduino IDE has a setting that will add a time stamp to
+ * each message so even if we're asleep we can look at the Serial Console the
+ * next morning to see when motion was detected.
+ *
+ * We *could* just add Serial.println() messages where we turn on the LED, but
+ * this could cause problems.  First of all, this code could be executing
+ * thousands of times per second and our log would have all those repeated
+ * messages.  Second, the act of printing messages actually takes time so the
+ * loop would end up repeating fewer times per second.
+ *
+ * What we really want is to print a message every time the sensor first
+ * detects motion, and perhaps another when the motion stops.
+ *
+ * We've done something similar in our previous sketches so let's use that
+ * technique again.  Let's create a variable that will save the value of the
+ * sensor from the *previous* execution of the loop, and only print our message
+ * (and turn on the lights) when motion is FIRST detected.  In other words,
+ * when the previous value was OFF and the current value is ON.
+ *
+ * Build, upload and then open the Serial Console. You can click the small
+ * "clock" symbol above the baud setting to see timestamps for each message.
  *
  * Alex Eschenauer
  * David Schmidt
@@ -8,9 +39,9 @@
 
 /*
  * Arduino language concepts introduced in this lesson.
+ * - timestamps for Arduino IDE Serial Console
  *
- * - Potentiometer
- * - Pulse Width Modulation (PWM)
+ * Hardware concepts introduced in this lesson:
  */
 #include "Arduino.h"
 
@@ -34,19 +65,23 @@
 const int FLOOD_LIGHTS = 22;   // Flood lights attached to pin 22
 const int MOTION_SENSOR = 23;  // PIR motion sensor pin
 
+// constants for turning lights on/off
 const uint8_t ON = HIGH;
 const uint8_t OFF = LOW;
 
 bool previous_motion = false;  // previous state of motion sensor's pin
 
 void setup() {
-  Serial.begin(9600);             // initialize serial
-  pinMode(MOTION_SENSOR, INPUT);  // set arduino pin to input mode
-  pinMode(FLOOD_LIGHTS, OUTPUT);  // set arduino pin to output mode
+  Serial.begin(9600);             // initialize serial console
+  pinMode(MOTION_SENSOR, INPUT);  // Input motion events
+  pinMode(FLOOD_LIGHTS, OUTPUT);  // Output for flood light control
 }
 
+// Check for motion status repeatedly.  Turn on flood lights and add a message
+// on the Serial Console when motion is FIRST detected.  Turn off flood lights
+// and print another message when motion detection ceases.
 void loop() {
-  bool motion_detected = digitalRead(MOTION_SENSOR);  // read new state
+  bool motion_detected = digitalRead(MOTION_SENSOR);  // read motion state
 
   if (motion_detected && !previous_motion) {  // New motion detected
     Serial.println("Motion detected!");
@@ -56,5 +91,4 @@ void loop() {
     digitalWrite(FLOOD_LIGHTS, OFF);  // turn off the flood lights
   }
   previous_motion = motion_detected;
-  delay(100);
 }
